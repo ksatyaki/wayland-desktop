@@ -1,0 +1,10 @@
+[Default Applications]
+x-scheme-handler/bitwarden=bitwarden.desktop
+x-scheme-handler/claude=com.anthropic.Claude.desktop
+x-scheme-handler/slack=slack.desktop
+x-scheme-handler/jetbrains=jetbrainsd.desktop
+x-scheme-handler/webcal=microsoft-edge.desktop
+inode/directory=pcmanfm-qt.desktop
+x-scheme-handler/tabby=tabby.desktop
+
+[Added Associations]

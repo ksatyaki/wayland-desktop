@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sway + Hyprland Refcard</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  /* Catppuccin Latte */
+  --base: #eff1f5; --mantle: #e6e9ef; --crust: #dce0e8; --surface0: #ccd0da; --surface1: #bcc0cc;
+  --text: #4c4f69; --subtext: #6c6f85; --overlay: #9ca0b0;
+  --blue: #1e66f5; --lavender: #7287fd; --peach: #fe640b; --green: #40a02b; --red: #d20f39; --mauve: #8839ef;
+  --key-bg: #e6e9ef; --key-border: #bcc0cc;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --base: #1e1e2e; --mantle: #181825; --crust: #11111b; --surface0: #313244; --surface1: #45475a;
+    --text: #cdd6f4; --subtext: #a6adc8; --overlay: #6c7086;
+    --blue: #89b4fa; --lavender: #b4befe; --peach: #fab387; --green: #a6e3a1; --red: #f38ba8; --mauve: #cba6f7;
+    --key-bg: #313244; --key-border: #45475a;
+  }
+}
+:root[data-theme="dark"] {
+  --base: #1e1e2e; --mantle: #181825; --crust: #11111b; --surface0: #313244; --surface1: #45475a;
+  --text: #cdd6f4; --subtext: #a6adc8; --overlay: #6c7086;
+  --blue: #89b4fa; --lavender: #b4befe; --peach: #fab387; --green: #a6e3a1; --red: #f38ba8; --mauve: #cba6f7;
+  --key-bg: #313244; --key-border: #45475a;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--base); color: var(--text);
+  font-family: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif; font-size: 15px; line-height: 1.5;
+}
+code, kbd, pre, .mono { font-family: "JetBrains Mono", "Iosevka", ui-monospace, monospace; }
+a { color: var(--blue); text-decoration: none; }
+a:hover, a:focus-visible { text-decoration: underline; }
+:focus-visible { outline: 2px solid var(--peach); outline-offset: 2px; }
+
+.page { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 40px; max-width: 1360px; margin: 0 auto; padding: 40px 24px 96px; }
+@media (max-width: 860px) { .page { grid-template-columns: minmax(0, 1fr); gap: 24px; } nav.toc { position: static; } }
+
+header.top { grid-column: 1 / -1; border-bottom: 1px solid var(--surface0); padding-bottom: 20px; margin-bottom: 8px; }
+header.top h1 { font-size: 30px; font-weight: 600; margin: 0 0 6px; letter-spacing: -0.01em; text-wrap: balance; }
+header.top p { margin: 0; color: var(--subtext); }
+.meta { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 12px; font-size: 13px; color: var(--subtext); }
+.meta span b { color: var(--text); font-weight: 500; }
+
+nav.toc { position: sticky; top: 24px; align-self: start; font-size: 13px; }
+nav.toc .eyebrow { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--overlay); margin-bottom: 8px; }
+nav.toc a { display: block; color: var(--subtext); padding: 3px 0; }
+nav.toc a:hover { color: var(--text); text-decoration: none; }
+
+main { min-width: 0; }
+section { margin-top: 44px; }
+section:first-of-type { margin-top: 12px; }
+h2 { font-size: 20px; font-weight: 600; margin: 0 0 14px; padding-bottom: 6px; border-bottom: 1px solid var(--surface0); letter-spacing: -0.005em; }
+h3 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--peach); border-bottom: 1px solid var(--surface1); padding-bottom: 5px; margin: 22px 0 8px; }
+p { margin: 0 0 10px; max-width: 90ch; }
+ul { margin: 0 0 10px; padding-left: 20px; }
+li { margin: 2px 0; }
+pre { background: var(--mantle); border: 1px solid var(--surface0); border-radius: 6px; padding: 12px 14px; overflow-x: auto; font-size: 13px; line-height: 1.55; margin: 8px 0 14px; }
+code { font-size: 0.92em; background: var(--mantle); border-radius: 4px; padding: 1px 5px; }
+pre code { background: none; padding: 0; font-size: inherit; }
+kbd { display: inline-block; font-size: 12.5px; line-height: 1; padding: 4px 6px; border-radius: 4px; background: var(--key-bg); border: 1px solid var(--key-border); border-bottom-width: 2px; color: var(--text); white-space: nowrap; }
+kbd + kbd { margin-left: 3px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 6px 0 14px; }
+.tablewrap { overflow-x: auto; }
+th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--subtext); font-weight: 600; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--surface1); }
+td { padding: 6px 10px 6px 0; border-bottom: 1px solid var(--surface0); vertical-align: top; }
+td.mono, td code { font-size: 13px; }
+tr:last-child td { border-bottom: none; }
+
+/* refcard: dense two-column key list, keys right-aligned like the Emacs card */
+.refcard { columns: 2; column-gap: 48px; }
+@media (max-width: 640px) { .refcard { columns: 1; } }
+.refcard .group { break-inside: avoid; margin-bottom: 18px; }
+.refcard .group h3 { margin: 0 0 8px; }
+.refcard dl { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 5px 16px; align-items: baseline; }
+.refcard dt { margin: 0; font-size: 14px; }
+.refcard dd { margin: 0; text-align: right; white-space: nowrap; }
+.note { color: var(--subtext); font-size: 13px; }
+.diff { color: var(--peach); font-size: 12px; font-weight: 500; }
+
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 640px) { .cols { grid-template-columns: 1fr; } }
+.tag { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; padding: 2px 7px; border-radius: 4px; background: var(--surface0); color: var(--subtext); }
+.tag.hypr { color: var(--blue); } .tag.sway { color: var(--green); } .tag.both { color: var(--lavender); }
+.callout { border-left: 3px solid var(--peach); padding: 4px 0 4px 14px; margin: 10px 0 14px; color: var(--subtext); font-size: 14px; }
+.swatches { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0 12px; }
+.sw { width: 26px; height: 26px; border-radius: 5px; border: 1px solid var(--surface1); }
+</style>
+</head><body>
+
+<div class="page">
+<header class="top">
+  <h1>Sway + Hyprland Refcard</h1>
+  <p>Fedora 44 · NVIDIA RTX 4060 Laptop (discrete only, driver 610) · SDDM on KWin · Catppuccin Mocha throughout.</p>
+  <div class="meta">
+    <span><b>Sway</b> 1.11</span><span><b>Hyprland</b> 0.56.2 (Lua config)</span><span><b>Waybar</b> 0.15</span>
+    <span><b>Mod</b> = Super</span><span>State as of 2026-09-14</span>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="eyebrow">Contents</div>
+  <a href="#install">Install</a>
+  <a href="#files">Config files</a>
+  <a href="#keys">Key cheatsheet</a>
+  <a href="#monitors">Monitors</a>
+  <a href="#bar">Bar</a>
+  <a href="#fonts">Fonts &amp; theming</a>
+  <a href="#commands">Commands</a>
+  <a href="#wallpapers">Wallpapers</a>
+  <a href="#login">Login screen</a>
+  <a href="#gotchas">Gotchas</a>
+</nav>
+
+<main>
+
+<section id="install">
+<h2>Install</h2>
+<h3>Repository</h3>
+<pre><code>sudo dnf copr enable lionheartp/Hyprland   # Hyprland is retired from Fedora proper</code></pre>
+<h3>Packages</h3>
+<pre><code># Sway
+sudo dnf install sway swaylock swayidle swaybg xdg-desktop-portal-wlr
+# Hyprland (from the COPR)
+sudo dnf install hyprland hyprlock hypridle hyprpolkitagent hyprshot hyprshutdown hyprland-guiutils xdg-desktop-portal-hyprland
+# Shared desktop pieces
+sudo dnf install waybar fuzzel mako brightnessctl playerctl grim slurp wl-clipboard kanshi wdisplays waypaper awww \
+                 pavucontrol nm-connection-editor blueman gnome-keyring xdg-desktop-portal-gtk
+# Apps and theming
+sudo dnf install pcmanfm-qt qt6ct qt5ct kvantum sddm sddm-themes
+# nvidia-smi for the bar's GPU popup ships with xorg-x11-drv-nvidia-cuda</code></pre>
+<p>Not from dnf: <b>Tabby</b> (terminal), <b>Claude Desktop</b>, <b>VS Code Insiders</b>, <b>Firefox</b> and <b>Steam</b> are the autostart and launcher targets.</p>
+<h3>Kept from Plasma</h3>
+<p><code>kwin</code>, <code>sddm-wayland-plasma</code>, <code>kde-settings-sddm</code>, <code>plasma-keyboard</code> run the SDDM greeter. Marked with <code>dnf mark user …</code> so <code>dnf autoremove</code> leaves them. <code>plasma-breeze-qt6</code> supplies the Breeze Qt style.</p>
+<h3>Fonts</h3>
+<p>JetBrainsMono Nerd Font (all weights) in <code>~/.fonts/JetBrainsMono/</code>, Iosevka and IBM Plex Sans in <code>~/.fonts/</code>. After adding fonts: <code>fc-cache -f</code>.</p>
+</section>
+
+<section id="files">
+<h2>Config files</h2>
+<p>Links open the file in the repo. Install to the path in the first column.</p>
+<div class="tablewrap"><table>
+<tr><th>Path on disk</th><th>File</th><th>Holds</th></tr>
+<tr><td class="mono">~/.config/hypr/hyprland.lua</td><td><a href="config/hypr/hyprland.lua" target="_blank">hyprland.lua</a></td><td>Hyprland: monitors, env, look, binds, rules, autostart</td></tr>
+<tr><td class="mono">~/.config/waypaper/config.ini</td><td><a href="config/waypaper/config.ini" target="_blank">waypaper-config.ini</a></td><td>Wallpaper picker: folder, backend awww, last image</td></tr>
+<tr><td class="mono">~/.config/hypr/hypridle.conf</td><td><a href="config/hypr/hypridle.conf" target="_blank">hypridle.conf</a></td><td>Lock 10 min, screen off 15 min, lock before sleep</td></tr>
+<tr><td class="mono">~/.config/hypr/hyprlock.conf</td><td><a href="config/hypr/hyprlock.conf" target="_blank">hyprlock.conf</a></td><td>Lock screen (Hyprland): DOOM wallpaper, Eternal UI font</td></tr>
+<tr><td class="mono">~/.config/swaylock/config</td><td><a href="config/swaylock/config" target="_blank">swaylock-config</a></td><td>Lock screen (Sway), same look</td></tr>
+<tr><td class="mono">~/.config/sway/config</td><td><a href="config/sway/config" target="_blank">sway-config</a></td><td>Sway: same binds, outputs, rules, autostart</td></tr>
+<tr><td class="mono">/usr/local/share/wayland-sessions/sway-nvidia.desktop</td><td><a href="system/wayland-sessions/sway-nvidia.desktop" target="_blank">sway-nvidia.desktop</a></td><td>SDDM session: <code>sway --unsupported-gpu</code></td></tr>
+<tr><td class="mono">~/.config/kanshi/config</td><td><a href="config/kanshi/config" target="_blank">kanshi-config</a></td><td>Monitor profiles for Sway (laptop / home / office)</td></tr>
+<tr><td class="mono">~/.config/waybar/config.jsonc</td><td><a href="config/waybar/config.jsonc" target="_blank">waybar-config.jsonc</a></td><td>Bar under Sway</td></tr>
+<tr><td class="mono">~/.config/waybar/config-hyprland.jsonc</td><td><a href="config/waybar/config-hyprland.jsonc" target="_blank">waybar-config-hyprland.jsonc</a></td><td>Bar under Hyprland</td></tr>
+<tr><td class="mono">~/.config/waybar/style.css</td><td><a href="config/waybar/style.css" target="_blank">waybar-style.css</a></td><td>Bar stylesheet</td></tr>
+<tr><td class="mono">~/.config/waybar/scripts/perf.sh</td><td><a href="config/waybar/scripts/perf.sh" target="_blank">waybar-perf.sh</a></td><td>CPU / memory / GPU popup (chmod +x)</td></tr>
+<tr><td class="mono">~/.config/mako/config</td><td><a href="config/mako/config" target="_blank">mako-config</a></td><td>Notifications</td></tr>
+<tr><td class="mono">~/.config/fuzzel/fuzzel.ini</td><td><a href="config/fuzzel/fuzzel.ini" target="_blank">fuzzel.ini</a></td><td>Super+D launcher</td></tr>
+<tr><td class="mono">~/.config/qt6ct/qt6ct.conf</td><td><a href="config/qt6ct/qt6ct.conf" target="_blank">qt6ct.conf</a></td><td>Qt6 style, icons, fonts (copy to <code>~/.config/qt5ct/qt5ct.conf</code> with paths changed)</td></tr>
+<tr><td class="mono">~/.config/qt6ct/colors/Catppuccin-Mocha.conf</td><td><a href="config/qt6ct/colors/Catppuccin-Mocha.conf" target="_blank">qt6ct-Catppuccin-Mocha.conf</a></td><td>Qt palette (same file for qt5ct)</td></tr>
+<tr><td class="mono">~/.config/gtk-3.0/settings.ini</td><td><a href="config/gtk-3.0/settings.ini" target="_blank">gtk-3.0-settings.ini</a></td><td>GTK theme, icons, font (gtk-4.0 is the same minus a few keys)</td></tr>
+<tr><td class="mono">~/.zprofile</td><td><a href="home/.zprofile" target="_blank">zprofile</a></td><td><code>QT_QPA_PLATFORMTHEME=qt6ct</code> for the whole session</td></tr>
+<tr><td class="mono">/etc/sddm.conf.d/10-theme.conf</td><td><a href="sddm/sddm.conf.d/10-theme.conf" target="_blank">sddm-10-theme.conf</a></td><td>SDDM theme <code>sddm-astronaut-theme</code></td></tr>
+<tr><td class="mono">/usr/share/sddm/themes/sddm-astronaut-theme/Themes/doom.conf</td><td><a href="sddm/sddm-astronaut-theme/Themes/doom.conf" target="_blank">sddm-doom.conf</a></td><td>Login screen preset: DOOM background, colours, prefilled user</td></tr>
+<tr><td class="mono">…/sddm-astronaut-theme/metadata.desktop</td><td><a href="sddm/sddm-astronaut-theme/metadata.desktop" target="_blank">sddm-metadata.desktop</a></td><td>Points the theme at <code>Themes/doom.conf</code></td></tr>
+<tr><td class="mono">~/.config/sddm-doom-theme/install-doom-sddm.sh</td><td><a href="sddm/install-sddm-theme.sh" target="_blank">install-doom-sddm.sh</a></td><td>Installs theme + fonts, writes the SDDM conf (run with sudo)</td></tr>
+</table></div>
+<h3>Restore</h3>
+<p>This page lives in the <code>ksatyaki/wayland-desktop</code> repo together with every file it links. <code>./install_hyprland_config.sh --packages --system</code> or <code>./install_sway_config.sh --packages --system</code> rebuilds the desktop; without flags only user config is copied (backups kept).</p>
+<p class="note">Also on disk, no file to copy: <code>~/.local/share/keyrings/default</code> contains <code>login</code>; <code>~/.config/kdeglobals</code> is deliberately absent; folder handler set with <code>xdg-mime default pcmanfm-qt.desktop inode/directory</code>.</p>
+</section>
+
+<section id="keys">
+<h2>Key cheatsheet</h2>
+<p class="note">Identical in both compositors unless tagged <span class="tag hypr">Hyprland</span> or <span class="tag sway">Sway</span>. Mod is the Super key.</p>
+<div class="refcard">
+
+<div class="group"><h3>Launch</h3><dl>
+<dt>Terminal (Tabby)</dt><dd><kbd>Mod</kbd><kbd>Return</kbd></dd>
+<dt>Launcher (fuzzel)</dt><dd><kbd>Mod</kbd><kbd>D</kbd></dd>
+<dt>Doom Emacs</dt><dd><kbd>Alt</kbd><kbd>Mod</kbd><kbd>E</kbd></dd>
+<dt>Lock screen</dt><dd><kbd>Mod</kbd><kbd>Ctrl</kbd><kbd>L</kbd></dd>
+<dt>Close window</dt><dd><kbd>Mod</kbd><kbd>Shift</kbd><kbd>Q</kbd></dd>
+<dt>Screenshot region → clipboard</dt><dd><kbd>Print</kbd></dd>
+<dt>Screenshot screen → ~/Pictures</dt><dd><kbd>Shift</kbd><kbd>Print</kbd></dd>
+</dl></div>
+
+<div class="group"><h3>Focus and move</h3><dl>
+<dt>Focus left / down / up / right</dt><dd><kbd>Mod</kbd><kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd> <kbd>;</kbd></dd>
+<dt>Same with arrows</dt><dd><kbd>Mod</kbd><kbd>←↓↑→</kbd></dd>
+<dt>Move window</dt><dd><kbd>Mod</kbd><kbd>Shift</kbd> + direction</dd>
+<dt>Focus parent <span class="tag sway">Sway</span></dt><dd><kbd>Mod</kbd><kbd>A</kbd></dd>
+<dt>Cycle windows <span class="tag hypr">Hyprland</span></dt><dd><kbd>Mod</kbd><kbd>Ctrl</kbd><kbd>Space</kbd></dd>
+<dt>Tiling ↔ floating focus <span class="tag sway">Sway</span></dt><dd><kbd>Mod</kbd><kbd>Ctrl</kbd><kbd>Space</kbd></dd>
+<dt>Drag / resize with mouse <span class="tag hypr">Hyprland</span></dt><dd><kbd>Mod</kbd> + left / right button</dd>
+</dl></div>
+
+<div class="group"><h3>Layout</h3><dl>
+<dt>Next window opens right / below</dt><dd><kbd>Mod</kbd><kbd>H</kbd> / <kbd>V</kbd></dd>
+<dt>Toggle split direction</dt><dd><kbd>Mod</kbd><kbd>E</kbd></dd>
+<dt>Fullscreen</dt><dd><kbd>Mod</kbd><kbd>F</kbd></dd>
+<dt>Tab all windows on workspace (again: untab) <span class="tag hypr">Hyprland</span> / tabbed layout <span class="tag sway">Sway</span></dt><dd><kbd>Mod</kbd><kbd>W</kbd></dd>
+<dt>Stacking <span class="tag sway">Sway</span></dt><dd><kbd>Mod</kbd><kbd>S</kbd></dd>
+<dt>Next / prev tab in group <span class="tag hypr">Hyprland</span></dt><dd><kbd>Mod</kbd><kbd>Tab</kbd> / <kbd>Shift</kbd><kbd>Tab</kbd></dd>
+<dt>Float toggle</dt><dd><kbd>Mod</kbd><kbd>Shift</kbd><kbd>Space</kbd></dd>
+<dt>Resize mode (then J K L ; or arrows, Return/Esc to leave)</dt><dd><kbd>Mod</kbd><kbd>R</kbd></dd>
+</dl></div>
+
+<div class="group"><h3>Workspaces</h3><dl>
+<dt>Go to workspace 1–10</dt><dd><kbd>Mod</kbd><kbd>1</kbd>…<kbd>0</kbd></dd>
+<dt>Move window to workspace</dt><dd><kbd>Mod</kbd><kbd>Shift</kbd><kbd>1</kbd>…<kbd>0</kbd></dd>
+<dt>Scratchpad show / send <span class="tag hypr">Hyprland</span></dt><dd><kbd>Mod</kbd><kbd>S</kbd> / <kbd>Shift</kbd><kbd>S</kbd></dd>
+<dt>Next / prev workspace <span class="tag hypr">Hyprland</span></dt><dd><kbd>Mod</kbd> + scroll</dd>
+<dt>Three-finger swipe <span class="tag hypr">Hyprland</span></dt><dd>switch workspace</dd>
+<dt>Back and forth <span class="tag sway">Sway</span></dt><dd>press current number again</dd>
+</dl></div>
+
+<div class="group"><h3>Keyboard layout</h3><dl>
+<dt>Toggle us ↔ se</dt><dd><kbd>Mod</kbd><kbd>Space</kbd></dd>
+<dt>Swedish / US directly</dt><dd><kbd>Alt</kbd><kbd>Mod</kbd><kbd>S</kbd> / <kbd>U</kbd></dd>
+<dt>Toggle from the bar</dt><dd>click keyboard icon</dd>
+</dl></div>
+
+<div class="group"><h3>Session</h3><dl>
+<dt>Reload config</dt><dd><kbd>Mod</kbd><kbd>Shift</kbd><kbd>C</kbd> or <kbd>R</kbd></dd>
+<dt>Exit / shutdown dialog</dt><dd><kbd>Mod</kbd><kbd>Shift</kbd><kbd>E</kbd></dd>
+</dl></div>
+
+<div class="group"><h3>Media (work while locked)</h3><dl>
+<dt>Volume ± 5 %, mute, mic mute</dt><dd>Fn volume keys</dd>
+<dt>Brightness</dt><dd>Fn brightness keys</dd>
+<dt>Play/pause, next, previous</dt><dd>Fn media keys</dd>
+</dl></div>
+
+<div class="group"><h3>Bar mouse</h3><dl>
+<dt>Speaker: mixer / mute / volume</dt><dd>click / middle / scroll</dd>
+<dt>Volume slider</dt><dd>hover speaker</dd>
+<dt>Metrics popup</dt><dd>hover gauge</dd>
+<dt>Network editor</dt><dd>click network</dd>
+<dt>Launchers</dt><dd>left of window title</dd>
+</dl></div>
+
+</div>
+</section>
+
+<section id="monitors">
+<h2>Monitors</h2>
+<p>Externals are matched by make/model/serial, so both sites live in one config and only the connected set applies. Laptop panel: <b>on</b> at home and alone, <b>off</b> at the office.</p>
+<div class="cols">
+<div><h3>Home</h3><div class="tablewrap"><table>
+<tr><th>Output</th><th>Position</th><th>Scale</th></tr>
+<tr><td>eDP-1 (laptop 2560×1600)</td><td class="mono">0,160</td><td>1.25</td></tr>
+<tr><td>Lenovo G27q-20 U63330HD</td><td class="mono">2048,0</td><td>1</td></tr>
+<tr><td>HP E24u G5 CN43172GTD</td><td class="mono">4608,360</td><td>1</td></tr>
+</table></div></div>
+<div><h3>Office</h3><div class="tablewrap"><table>
+<tr><th>Output</th><th>Position</th><th>Scale</th></tr>
+<tr><td>Dell U2422H 3119RP3</td><td class="mono">0,360</td><td>1</td></tr>
+<tr><td>AOC Q27G42XE 1O0R4HA008572</td><td class="mono">1920,0</td><td>1</td></tr>
+<tr><td>Dell U2422H 85LJRP3</td><td class="mono">4480,360</td><td>1</td></tr>
+<tr><td>eDP-1</td><td colspan="2">disabled</td></tr>
+</table></div></div>
+</div>
+<ul>
+<li><span class="tag hypr">Hyprland</span> decides the panel in Lua at config load (<code>docked()</code> scans <code>hl.get_monitors()</code> for an office description) and reloads the config on <code>monitor.added</code> / <code>monitor.removed</code>.</li>
+<li><span class="tag sway">Sway</span> uses kanshi profiles (laptop / home / office). Never run kanshi under Hyprland.</li>
+<li><code>xwayland.force_zero_scaling = true</code> in Hyprland: Proton games see the panel at 2560×1600. Sway always upscales Xwayland on a scaled output.</li>
+<li>Names: <code>hyprctl monitors</code> or <code>swaymsg -t get_outputs</code>. Test a layout without saving: <code>wdisplays</code>.</li>
+<li>Workspace 2 is pinned to the Lenovo; Windows programs (class <code>steam_app_&lt;id&gt;</code> or <code>*.exe</code>) always open there. Fixed workspaces: Emacs 2, Chrome 3, Telegram 4, MATLAB 5.</li>
+</ul>
+</section>
+
+<section id="bar">
+<h2>Bar</h2>
+<p>Waybar, bottom, height 44, one instance per monitor, workspaces per monitor. Text Iosevka 18 px, icons JetBrainsMono Nerd Font pinned per icon.</p>
+<div class="tablewrap"><table>
+<tr><th>Left</th><th>Center</th><th>Right</th></tr>
+<tr><td>workspaces · launchers (Tabby, files, Firefox, VS Code Insiders, Claude, Steam) · mode · window title</td><td>date, time</td><td>tray · keyboard layout · volume (hover slider) · network (SSID or IP) · bluetooth · metrics gauge · brightness · battery</td></tr>
+</table></div>
+<h3>Metrics popup</h3>
+<p>Hover the gauge: CPU temp, CPU usage, memory, rule, GPU temp, GPU usage, GPU memory. Source: <code>scripts/perf.sh</code>, refreshed every 3 s. Gauge turns red above 80 % CPU.</p>
+<h3>Add a launcher</h3>
+<ul>
+<li>Copy a <code>custom/app-*</code> block in <b>both</b> bar configs; set icon, <code>tooltip-format</code>, <code>on-click</code>.</li>
+<li>Add its name to <code>modules-left</code> in both files and to the <code>#custom-app-*</code> selector list in <code>style.css</code>.</li>
+<li>Write icons as <code>\uXXXX</code> escapes. Glyph codes: nerdfonts.com/cheat-sheet.</li>
+</ul>
+<h3>Launcher colours</h3>
+<div class="swatches"><div class="sw" style="background:#ff7139" title="Firefox #ff7139"></div><div class="sw" style="background:#24bfa5" title="VS Code Insiders #24bfa5"></div><div class="sw" style="background:#d97757" title="Claude #d97757"></div><div class="sw" style="background:#66c0f4" title="Steam #66c0f4"></div></div>
+<p class="note">Firefox <code>#ff7139</code> · VS Code Insiders <code>#24bfa5</code> · Claude <code>#d97757</code> · Steam <code>#66c0f4</code> · terminal and files <code>@subtext</code>.</p>
+</section>
+
+<section id="fonts">
+<h2>Fonts &amp; theming</h2>
+<div class="tablewrap"><table>
+<tr><th>Where</th><th>File</th><th>Setting</th></tr>
+<tr><td>Bar text</td><td class="mono">waybar/style.css</td><td class="mono">font-family: "Iosevka", …; font-size: 18px</td></tr>
+<tr><td>Bar icons</td><td class="mono">waybar/config*.jsonc</td><td class="mono">&lt;span size='large' font_family='JetBrainsMono Nerd Font'&gt;</td></tr>
+<tr><td>Launcher</td><td class="mono">fuzzel/fuzzel.ini</td><td class="mono">font=Iosevka:size=13</td></tr>
+<tr><td>Notifications</td><td class="mono">mako/config</td><td class="mono">font=Iosevka 11</td></tr>
+<tr><td>Sway titles</td><td class="mono">sway/config</td><td class="mono">font pango:JetBrainsMono Nerd Font 10</td></tr>
+<tr><td>Hyprland UI</td><td class="mono">hypr/hyprland.lua</td><td class="mono">misc.font_family</td></tr>
+<tr><td>Lock screen</td><td class="mono">hypr/hyprlock.conf</td><td class="mono">$font, font_size per label</td></tr>
+<tr><td>Qt apps</td><td class="mono">qt6ct.conf / qt5ct.conf</td><td>Breeze style, breeze-dark icons, Catppuccin palette, IBM Plex Sans 11. GUI: <code>qt6ct</code></td></tr>
+<tr><td>GTK apps</td><td class="mono">gtk-3.0/settings.ini, gtk-4.0/settings.ini</td><td>Adwaita, breeze icons, IBM Plex Sans 13. GUI: <code>nwg-look</code></td></tr>
+</table></div>
+<ul>
+<li>Qt reads qt6ct only at startup; pcmanfm-qt is single-instance: <code>pkill pcmanfm-qt</code> after changes.</li>
+<li>Icon themes shared by both toolkits by name: breeze, breeze-dark, Tela, WhiteSur, McMojave-circle, candy-icons (<code>~/.local/share/icons/</code>).</li>
+<li>Cursor size: <code>XCURSOR_SIZE</code> / <code>HYPRCURSOR_SIZE</code> in hyprland.lua.</li>
+</ul>
+</section>
+
+<section id="commands">
+<h2>Commands</h2>
+<div class="tablewrap"><table>
+<tr><th>Task</th><th>Command</th></tr>
+<tr><td>Validate Sway</td><td class="mono">sway -C --unsupported-gpu</td></tr>
+<tr><td>Reload Sway (restarts bar too)</td><td class="mono">swaymsg reload</td></tr>
+<tr><td>Pick a wallpaper</td><td class="mono">waypaper</td></tr>
+<tr><td>Validate Hyprland</td><td class="mono">Hyprland --verify-config</td></tr>
+<tr><td>Reload Hyprland</td><td>automatic on save, or <code>hyprctl reload</code></td></tr>
+<tr><td>Restart bar (Hyprland)</td><td class="mono">pkill waybar; setsid waybar -c ~/.config/waybar/config-hyprland.jsonc &amp;</td></tr>
+<tr><td>Reload mako</td><td class="mono">makoctl reload</td></tr>
+<tr><td>Headset back to stereo</td><td class="mono">bluetoothctl disconnect 20:AF:1B:02:D2:BA; bluetoothctl connect 20:AF:1B:02:D2:BA</td></tr>
+<tr><td>Font names / resolution</td><td class="mono">fc-list : family | sort -u · fc-match "Name"</td></tr>
+<tr><td>Lua API reference</td><td class="mono">/usr/share/hypr/stubs/hl.meta.lua · /usr/share/hypr/hyprland.lua</td></tr>
+</table></div>
+</section>
+
+<section id="wallpapers">
+<h2>Wallpapers</h2>
+<p><b>waypaper</b> (GTK picker, launch from Super+D) over the <b>awww</b> daemon. Folder <code>~/Pictures/Wallpapers</code>. Both compositors autostart <code>awww-daemon</code> then <code>waypaper --restore</code>, which reapplies the last pick. hyprpaper and swaybg are not started.</p>
+</section>
+
+<section id="login">
+<h2>Login screen</h2>
+<p>SDDM with <b>sddm-astronaut-theme</b> (Qt6 QML) and the <code>doom</code> preset. Install: clone github.com/Keyitdev/sddm-astronaut-theme into <code>/usr/share/sddm/themes/</code>, copy <code>Fonts/*</code> to <code>/usr/share/fonts/</code>, drop <code>doom.conf</code> into <code>Themes/</code> and the background into <code>Backgrounds/doom.jpeg</code>, set <code>ConfigFile=Themes/doom.conf</code> in <code>metadata.desktop</code>. Font: fan-made <b>Eternal UI</b> (in <code>Fonts/</code>, installed to <code>/usr/share/fonts/</code> by the script). Username prefilled, cursor in the password field. Lock screens (hyprlock, swaylock) reuse the wallpaper, font and colours. Preview: <code>sddm-greeter-qt6 --test-mode --theme /usr/share/sddm/themes/sddm-astronaut-theme</code>.</p>
+</section>
+
+<section id="gotchas">
+<h2>Gotchas</h2>
+<ul>
+<li>Sway needs <code>--unsupported-gpu</code> on the proprietary NVIDIA driver; the session file passes it.</li>
+<li>Hyprland Lua: a monitor rule with <code>disabled = false</code> is ignored; the catch-all <code>output = ""</code> rule must be the last <code>hl.monitor</code> call; wiki spring curves use <code>dampening</code>, and there is no <code>reload_config</code> dispatcher (use <code>exec_cmd("hyprctl reload")</code>).</li>
+<li>Bar icons must be <code>\u</code> escapes; raw private-use glyphs get stripped by some editors and tools. A custom module whose command prints nothing is hidden entirely.</li>
+<li>Hyprland makes the last-connected input device the main keyboard; the bar's language module is pinned to <code>at-translated-set-2-keyboard</code>.</li>
+<li>Breeze Qt style paints menu bars and toolbars from <code>~/.config/kdeglobals</code> if it exists. Keep it deleted, or switch qt6ct to Fusion or Kvantum.</li>
+<li>Bluetooth headset stuck in mono means the hands-free profile; reconnect to renegotiate A2DP. Any app opening the mic switches it back to mono.</li>
+<li>Proportional fonts misalign Waybar modules; keep a monospace text font on the bar.</li>
+<li>Brightness keys need the user in the <code>video</code> group: <code>sudo usermod -aG video $USER</code>.</li>
+<li>Session env: SDDM starts Wayland sessions through a zsh login shell, so <code>~/.zprofile</code> reaches both compositors.</li>
+</ul>
+</section>
+
+</main>
+</div>
+
+</body></html>

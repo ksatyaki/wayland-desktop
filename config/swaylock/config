@@ -1,0 +1,32 @@
+# DOOM lock screen for Sway (same wallpaper and font as the SDDM login theme)
+image=~/Pictures/Wallpapers/DOOM95.jpeg
+scaling=fill
+font=Eternal UI
+font-size=26
+indicator-radius=110
+indicator-thickness=8
+indicator-idle-visible
+show-keyboard-layout
+color=120404
+inside-color=120404e6
+inside-clear-color=120404e6
+inside-ver-color=120404e6
+inside-wrong-color=2a0a06e6
+ring-color=ff6a2b
+ring-clear-color=ffb347
+ring-ver-color=ffb347
+ring-wrong-color=ff3b1f
+line-color=00000000
+line-clear-color=00000000
+line-ver-color=00000000
+line-wrong-color=00000000
+separator-color=00000000
+key-hl-color=ffb347
+bs-hl-color=ff3b1f
+text-color=ffe9c4
+text-clear-color=ffe9c4
+text-ver-color=ffe9c4
+text-wrong-color=ff3b1f
+layout-bg-color=120404cc
+layout-border-color=ff6a2b
+layout-text-color=ffe9c4
