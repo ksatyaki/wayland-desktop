@@ -19,8 +19,8 @@
 @define-color mauve    #cba6f7;
 
 * {
-    font-family: "Iosevka", "JetBrainsMono Nerd Font", monospace;
-    font-size: 18px;
+    font-family: "Eternal UI", "JetBrainsMono Nerd Font", sans-serif;   /* DOOM Eternal UI: mixed case */
+    font-size: 19px;
     min-height: 0;
     border: none;
     border-radius: 0;
@@ -42,6 +42,8 @@ window#waybar {
     padding: 0 2px;
 }
 #workspaces button {
+    font-family: "Eternal UI 2", "JetBrainsMono Nerd Font";   /* caps-only bold face */
+    font-weight: bold;
     color: @overlay;
     padding: 0 8px;
     margin: 4px 1px;
@@ -100,6 +102,7 @@ window#waybar.empty #window {
 }
 
 #clock {
+    font-family: "Eternal UI 2", "JetBrainsMono Nerd Font";
     color: @lavender;
     font-weight: bold;
     padding: 0 12px;

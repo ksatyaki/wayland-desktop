@@ -35,14 +35,18 @@ RowLayout {
             icon.color: config.SystemButtonsIconsColor
             palette.buttonText: config.SystemButtonsIconsColor
             display: AbstractButton.TextUnderIcon
+            padding: root.font.pointSize * 0.8
+            leftPadding: root.font.pointSize * 1.4
+            rightPadding: root.font.pointSize * 1.4
             visible: config.HideSystemButtons != "true" && (config.BypassSystemButtonsChecks == "true" ? 1 : modelData[2])
             hoverEnabled: true
 
-            background: Rectangle {
-                height: 2
-                width: parent.width
-
-                color: "transparent"
+            background: EternalShape {
+                fillColor: config.LoginFieldBackgroundColor
+                fillOpacity: parent.hovered || parent.activeFocus ? 0.85 : 0.5
+                borderColor: parent.hovered || parent.activeFocus ? config.HighlightBorderColor : (config.FieldBorderColor || "transparent")
+                tlX: root.font.pointSize; tlY: root.font.pointSize
+                brX: root.font.pointSize * 0.5; brY: root.font.pointSize * 0.5
             }
 
             Keys.onReturnPressed: clicked()

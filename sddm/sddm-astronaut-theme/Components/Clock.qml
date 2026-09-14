@@ -17,6 +17,8 @@ Column {
 
         anchors.horizontalCenter: parent.horizontalCenter
 
+        font.family: config.HeaderFont || root.font.family
+        font.bold: config.HeaderFont ? true : false
         font.pointSize: root.font.pointSize * 3
         color: config.HeaderTextColor
         renderType: Text.QtRendering
@@ -28,6 +30,7 @@ Column {
 
         anchors.horizontalCenter: parent.horizontalCenter
 
+        font.family: config.HeaderFont || root.font.family
         font.pointSize: root.font.pointSize * 9
         font.bold: true
         color: config.TimeTextColor

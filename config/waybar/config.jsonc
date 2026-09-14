@@ -46,7 +46,7 @@
         }
     },
     "clock": {
-        "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf073</span> {:%a %d %b    %H:%M}",
+        "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf073</span>  {:%a %d %b    %H:%M}",
         "tooltip-format": "<tt><small>{calendar}</small></tt>",
         "calendar": {
             "mode": "month",
@@ -59,14 +59,14 @@
         }
     },
     "sway/language": {
-        "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf11c</span>  {short}",
+        "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf11c</span>   {short}",
         "tooltip-format": "{long}",
         "on-click": "swaymsg input type:keyboard xkb_switch_layout next"
     },
     "pulseaudio": {
-        "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>{icon}</span> {volume}%",
-        "format-muted": "<span size='large' font_family='JetBrainsMono Nerd Font'>\udb81\udf5f</span> muted",
-        "format-bluetooth": "<span size='large' font_family='JetBrainsMono Nerd Font'>{icon}</span> {volume}%",
+        "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>{icon}</span>  {volume}%",
+        "format-muted": "<span size='large' font_family='JetBrainsMono Nerd Font'>\udb81\udf5f</span>  muted",
+        "format-bluetooth": "<span size='large' font_family='JetBrainsMono Nerd Font'>{icon}</span>  {volume}%",
         "format-icons": {
             "headphone": "\udb80\udecb",
             "default": [
@@ -81,9 +81,9 @@
         "tooltip-format": "{desc}\nmiddle-click: mute, scroll: volume"
     },
     "network": {
-        "format-wifi": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf1eb</span> {essid}",
-        "format-ethernet": "<span size='large' font_family='JetBrainsMono Nerd Font'>\udb80\ude00</span> {ipaddr}",
-        "format-disconnected": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf127</span> off",
+        "format-wifi": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf1eb</span>   {essid}",
+        "format-ethernet": "<span size='large' font_family='JetBrainsMono Nerd Font'>\udb80\ude00</span>  {ipaddr}",
+        "format-disconnected": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf127</span>  off",
         "tooltip-format": "{ifname}: {ipaddr}/{cidr} via {gwaddr}\n{essid} {signalStrength}%  \u2193{bandwidthDownBits} \u2191{bandwidthUpBits}",
         "interval": 5,
         "on-click": "nm-connection-editor",
@@ -97,7 +97,7 @@
         "on-click": "blueman-manager"
     },
     "backlight": {
-        "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>{icon}</span> {percent}%",
+        "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>{icon}</span>  {percent}%",
         "format-icons": [
             "\udb80\udcde",
             "\udb80\udcdf",

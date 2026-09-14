@@ -141,8 +141,11 @@ Column {
                     color: config.DropdownTextColor
                 }
 
-                background: Rectangle {
-                    color: selectUser.highlightedIndex === index ? config.DropdownSelectedBackgroundColor : "transparent"
+                background: EternalShape {
+                    fillColor: config.DropdownSelectedBackgroundColor
+                    fillOpacity: selectUser.highlightedIndex === index ? 1 : 0
+                    trX: height * 0.6; trY: height
+                    blX: height * 0.6; blY: height
                 }
             }
 
@@ -191,10 +194,11 @@ Column {
                     ScrollIndicator.vertical: ScrollIndicator { }
                 }
 
-                background: Rectangle {
-                    radius: config.RoundCorners / 2
-                    color: config.DropdownBackgroundColor
-                    layer.enabled: true
+                background: EternalShape {
+                    fillColor: config.DropdownBackgroundColor
+                    fillOpacity: 0.95
+                    borderColor: config.FieldBorderColor || "transparent"
+                    tlX: 10; tlY: 10; trX: 10; trY: 10; brX: 10; brY: 10; blX: 10; blY: 10
                 }
 
                 enter: Transition {
@@ -245,7 +249,9 @@ Column {
             anchors.centerIn: parent
             height: root.font.pointSize * 3
             width: parent.width
-            horizontalAlignment: TextInput.AlignHCenter
+            horizontalAlignment: TextInput.AlignLeft
+            leftPadding: usernameField.height
+            rightPadding: height
             z: 1
 
             text: config.ForceLastUser == "true" ? selectUser.displayText : null
@@ -262,12 +268,14 @@ Column {
                     selectAll()
             }
 
-            background: Rectangle {
-                color: config.LoginFieldBackgroundColor
-                opacity: 0.2
-                border.color: "transparent"
-                border.width: parent.activeFocus ? 2 : 1
-                radius: config.RoundCorners || 0
+            background: EternalShape {
+                fillColor: config.LoginFieldBackgroundColor
+                fillOpacity: 0.85
+                borderColor: config.FieldBorderColor || "transparent"
+                // elongated hexagon: points at mid-height on both ends
+                tlX: height / 2; tlY: height / 2; blX: height / 2; blY: height / 2
+                trX: height / 2; trY: height / 2; brX: height / 2; brY: height / 2
+                bottomLine: true
             }
 
             onAccepted: triggerLogin()
@@ -279,7 +287,8 @@ Column {
                     when: username.activeFocus
                     PropertyChanges {
                         target: username.background
-                        border.color: config.HighlightBorderColor
+                        borderColor: config.HighlightBorderColor
+                        fillOpacity: 1
                     }
                     PropertyChanges {
                         target: username
@@ -377,7 +386,9 @@ Column {
             height: root.font.pointSize * 3
             width: parent.width
             anchors.centerIn: parent
-            horizontalAlignment: TextInput.AlignHCenter
+            horizontalAlignment: TextInput.AlignLeft
+            leftPadding: usernameField.height
+            rightPadding: height
 
             font.bold: true
             color: config.PasswordFieldTextColor
@@ -390,12 +401,14 @@ Column {
             renderType: Text.QtRendering
             selectByMouse: true
 
-            background: Rectangle {
-                color: config.PasswordFieldBackgroundColor
-                opacity: 0.2
-                border.color: "transparent"
-                border.width: parent.activeFocus ? 2 : 1
-                radius: config.RoundCorners || 0
+            background: EternalShape {
+                fillColor: config.PasswordFieldBackgroundColor
+                fillOpacity: 0.85
+                borderColor: config.FieldBorderColor || "transparent"
+                // elongated hexagon: points at mid-height on both ends
+                tlX: height / 2; tlY: height / 2; blX: height / 2; blY: height / 2
+                trX: height / 2; trY: height / 2; brX: height / 2; brY: height / 2
+                bottomLine: true
             }
             onAccepted: triggerLogin()
             KeyNavigation.down: loginButton
@@ -407,7 +420,8 @@ Column {
                 when: password.activeFocus
                 PropertyChanges {
                     target: password.background
-                    border.color: config.HighlightBorderColor
+                    borderColor: config.HighlightBorderColor
+                    fillOpacity: 1
                 }
                 PropertyChanges {
                     target: password
@@ -418,7 +432,7 @@ Column {
         transitions: [
             Transition {
                 PropertyAnimation {
-                    properties: "color, border.color"
+                    properties: "color, borderColor, fillOpacity"
                     duration: 150
                 }
             }
@@ -449,23 +463,29 @@ Column {
             hoverEnabled: true
 
             contentItem: Text {
-                horizontalAlignment: Text.AlignHCenter
+                horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
+                leftPadding: usernameField.height + loginButton.height * 0.35
 
                 font.bold: true
                 font.pointSize: root.font.pointSize
                 font.family: root.font.family
-                color: config.LoginButtonTextColor
+                color: loginButton.enabled ? config.LoginButtonTextColor : config.PlaceholderTextColor
                 text: parent.text
                 opacity: 0.5
             }
 
-            background: Rectangle {
+            background: EternalShape {
                 id: buttonBackground
 
-                color: config.LoginButtonBackgroundColor
-                opacity: 0.2
-                radius: config.RoundCorners || 0
+                fillColor: config.LoginFieldBackgroundColor
+                fillOpacity: 0.5
+                borderColor: config.FieldBorderColor || "transparent"
+                // parallelogram: both ends slant the same way
+                trX: height * 0.7; trY: height
+                blX: height * 0.7; blY: height
+                bottomLine: true
+                lineColor: loginButton.enabled ? config.LoginButtonTextColor : borderColor
             }
 
             states: [
@@ -474,8 +494,9 @@ Column {
                     when: loginButton.down
                     PropertyChanges {
                         target: buttonBackground
-                        color: Qt.darker(config.LoginButtonBackgroundColor, 1.1)
-                        opacity: 1
+                        fillColor: Qt.darker(config.LoginButtonBackgroundColor, 1.1)
+                        fillOpacity: 1
+                        borderColor: config.HighlightBorderColor
                     }
                     PropertyChanges {
                         target: loginButton.contentItem
@@ -486,8 +507,9 @@ Column {
                     when: loginButton.hovered
                     PropertyChanges {
                         target: buttonBackground
-                        color: Qt.lighter(config.LoginButtonBackgroundColor, 1.15)
-                        opacity: 1
+                        fillColor: Qt.lighter(config.LoginButtonBackgroundColor, 1.15)
+                        fillOpacity: 1
+                        borderColor: config.HighlightBorderColor
                     }
                     PropertyChanges {
                         target: loginButton.contentItem
@@ -499,8 +521,9 @@ Column {
                     when: loginButton.activeFocus
                     PropertyChanges {
                         target: buttonBackground
-                        color: Qt.lighter(config.LoginButtonBackgroundColor, 1.2)
-                        opacity: 1
+                        fillColor: Qt.lighter(config.LoginButtonBackgroundColor, 1.2)
+                        fillOpacity: 1
+                        borderColor: config.HighlightBorderColor
                     }
                     PropertyChanges {
                         target: loginButton.contentItem
@@ -512,8 +535,9 @@ Column {
                     when: loginButton.enabled
                     PropertyChanges {
                         target: buttonBackground;
-                        color: config.LoginButtonBackgroundColor;
-                        opacity: 1
+                        fillColor: config.LoginButtonBackgroundColor;
+                        fillOpacity: 1
+                        borderColor: config.LoginButtonBackgroundColor
                     }
                     PropertyChanges {
                         target: loginButton.contentItem;
@@ -524,7 +548,7 @@ Column {
             transitions: [
                 Transition {
                     PropertyAnimation {
-                        properties: "opacity, color";
+                        properties: "opacity, color, fillOpacity, fillColor, borderColor";
                         duration: 300
                     }
                 }

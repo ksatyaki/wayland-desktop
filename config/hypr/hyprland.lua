@@ -85,8 +85,10 @@ hl.config({
         groupbar = {                           -- the tab strip above a group (i3 "tabbed")
             enabled       = true,
             render_titles = true,
-            font_family   = "Iosevka",
-            font_size     = 13,
+            font_family   = "Eternal UI",      -- DOOM Eternal font; the Bold weight is caps-only
+            font_weight_active   = "bold",
+            font_weight_inactive = "bold",
+            font_size     = 14,
             height        = 24,
             gradients     = true,
             gradient_rounding = 6,
@@ -134,7 +136,7 @@ hl.config({
     misc = {
         disable_hyprland_logo   = true,
         force_default_wallpaper = 0,
-        font_family             = "JetBrainsMono Nerd Font",
+        font_family             = "Eternal UI",   -- dialogs and error overlay
         focus_on_activate       = true,
     },
 })

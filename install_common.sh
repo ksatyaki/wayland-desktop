@@ -22,7 +22,7 @@ put_config() {
 install_shared() {
     echo "Shared config:"
     for d in waybar mako fuzzel qt6ct qt5ct gtk-3.0 gtk-4.0 waypaper mimeapps.list; do put_config "$d"; done
-    chmod +x "$HOME/.config/waybar/scripts/perf.sh"
+    chmod +x "$HOME/.config/waybar/scripts/perf.sh" "$HOME/.config/waybar/scripts/gpu.sh"
     if [ -e "$HOME/.zprofile" ] && ! cmp -s "$REPO/home/.zprofile" "$HOME/.zprofile"; then
         cp "$HOME/.zprofile" "$HOME/.zprofile.bak-$STAMP"; echo "  backup: ~/.zprofile.bak-$STAMP"
     fi

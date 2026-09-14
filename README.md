@@ -22,6 +22,7 @@ Without flags the scripts only copy user config (existing files are backed up as
 | `wallpapers/` | `~/Pictures/Wallpapers/` |
 | `sddm/` | `~/.config/sddm-doom-theme/` and, via `sddm/install-sddm-theme.sh`, `/usr/share/sddm/themes/`, `/etc/sddm.conf.d/` |
 | `system/wayland-sessions/sway-nvidia.desktop` | `/usr/local/share/wayland-sessions/` |
+| `tools/` | not installed: `eternal-panel.py` regenerates the chamfered PNG panels used by hyprlock |
 
 Binary files (fonts, wallpaper) are tracked with Git LFS.
 
@@ -102,13 +103,16 @@ Where each font is set (change the name or size here):
 
 | What | File and line | Setting |
 |---|---|---|
-| Bar (Waybar) | `~/.config/waybar/style.css`, the `*` block near the top | Text: `font-family: "Iosevka", ...; font-size: 18px;` (bar `height` is 44 in both `config*.jsonc`; Waybar warns if it is below what the modules need). Icons: each icon in the two `config*.jsonc` is a `<span size='large' font_family='JetBrainsMono Nerd Font'>`, so they keep the Nerd Font whatever the text font is |
-| Super+D launcher (fuzzel) | `~/.config/fuzzel/fuzzel.ini`, `[main]` | `font=Iosevka:size=13` |
-| Sway titles / swaynag | `~/.config/sway/config` | `font pango:JetBrainsMono Nerd Font 10` |
-| Hyprland (group bars, dialogs) | `~/.config/hypr/hyprland.lua`, `misc` block | `font_family = "JetBrainsMono Nerd Font"` |
-| Lock screen (hyprlock) | `~/.config/hypr/hyprlock.conf` | `$font = ...` at the top, `font_size` per label |
-| Notifications (mako) | `~/.config/mako/config` | `font=Iosevka 11` |
+| Bar (Waybar) | `~/.config/waybar/style.css`, the `*` block near the top | Text: `font-family: "Eternal UI", ...; font-size: 19px;` (workspace numbers and clock use the caps-only `Eternal UI 2` bold in their own blocks) (bar `height` is 44 in both `config*.jsonc`; Waybar warns if it is below what the modules need). Icons: each icon in the two `config*.jsonc` is a `<span size='large' font_family='JetBrainsMono Nerd Font'>`, so they keep the Nerd Font whatever the text font is |
+| Super+D launcher (fuzzel) | `~/.config/fuzzel/fuzzel.ini`, `[main]` | `font=Eternal UI:size=14` |
+| Sway titles / swaynag | `~/.config/sway/config` | `font pango:Eternal UI Bold 11` (caps-only weight) |
+| Hyprland (group bars, dialogs) | `~/.config/hypr/hyprland.lua`, `groupbar` and `misc` blocks | `font_family = "Eternal UI"`, group bar in the bold (caps-only) weight |
+| Lock screen (hyprlock) | `~/.config/hypr/hyprlock.conf` | `$font` (fields) and `$hfont` (header, clock) at the top, `font_size` per label |
+| Notifications (mako) | `~/.config/mako/config` | `font=Eternal UI 12` |
 | Tabby | Tabby settings, Appearance | GUI setting, not a file managed here |
+| Login screen (SDDM) | `Themes/doom.conf` | `Font` (fields, buttons) and `HeaderFont` (header text and clock, bold) |
+
+The DOOM fonts: `Eternal UI` and `Eternal UI 2` regular weights are condensed sans faces with real lowercase; both bold weights are caps-only (lowercase renders as capitals, `Eternal UI 2` bold has the slashed O), so they are used only for title bars, workspace numbers, the clock and headers. GTK and Qt apps stay on IBM Plex Sans.
 
 After editing: `swaymsg reload` (Sway + bar), Hyprland reloads on save (bar needs a restart, see below),
 `makoctl reload` for mako; fuzzel reads its file on every launch.
@@ -153,10 +157,12 @@ pcmanfm-qt have no icon theme, style or font. The replacement is qt6ct (Qt6) and
 ## Login screen (SDDM)
 
 - Theme: `sddm-astronaut-theme` (Qt6 QML, github.com/Keyitdev/sddm-astronaut-theme) with a custom `doom` preset. Master copy in `~/.config/sddm-doom-theme/`, installed copy in `/usr/share/sddm/themes/sddm-astronaut-theme/`.
-- Install or reinstall: `sudo sh ~/.config/sddm-doom-theme/install-doom-sddm.sh` (copies the theme, installs its fonts, writes `/etc/sddm.conf.d/10-theme.conf` and `20-users.conf`).
+- Install or reinstall: `sudo sh ~/.config/sddm-doom-theme/install-sddm-theme.sh` (copies the theme, installs its fonts, writes `/etc/sddm.conf.d/10-theme.conf` and `20-users.conf`).
 - Username is prefilled with the last login and the cursor starts in the password field (`ForceLastUser`, `PasswordFocus` in the preset, `RememberLastUser` in SDDM).
 - Fonts: fan-made DOOM Eternal UI fonts (`Eternal UI`, `Eternal UI 2`) in `~/.fonts/doom/` for the session and in the theme's `Fonts/` dir (the install script puts them in `/usr/share/fonts/` for the greeter).
 - Lock screen matches: `~/.config/hypr/hyprlock.conf` (Hyprland) and `~/.config/swaylock/config` (Sway, `$lock` is plain `swaylock -f`) use the same wallpaper, font and colours.
+- Eternal-style shapes: fields, login button, dropdowns and power buttons are drawn by `Components/EternalShape.qml` (a QtQuick.Shapes polygon with per-corner chamfers: the fields are elongated hexagons, the login button and dropdown highlight are parallelograms, the popups are cards with four small cuts). The preset's colours follow the Eternal menu: olive panels (`LoginFieldBackgroundColor`), light-green outline (`FieldBorderColor`, a key added to the theme; `HighlightBorderColor` when focused) and orange for the active login button (`LoginButtonBackgroundColor`). Other presets ignore the new key and fall back to no outline.
+- hyprlock can only draw rectangles, so its chamfered panels are PNGs in `~/.config/hypr/` (`eternal-input.png`, `eternal-layout.png`) rendered by `tools/eternal-panel.py` in the repo; the `input-field` is transparent on top of the image and only draws the dots and the red failure outline. swaylock has no image widgets, so the Sway lock screen keeps its plain ring indicator.
 - Change the look: edit `Themes/doom.conf` in the installed copy (`Background=` takes png/jpg/gif/mp4/webm relative to the theme dir, `HeaderText`, colours, `Font`). Preview without logging out: `sddm-greeter-qt6 --test-mode --theme /usr/share/sddm/themes/sddm-astronaut-theme`.
 
 ## Windows programs (Steam/Proton, Wine)

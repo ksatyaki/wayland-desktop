@@ -26,6 +26,8 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
 
         hoverEnabled: true
+        leftPadding: root.font.pointSize
+        rightPadding: root.font.pointSize
         model: sessionModel
         currentIndex: model.lastIndex
         textRole: "name"
@@ -51,8 +53,11 @@ Item {
                 color: config.DropdownTextColor
             }
 
-            background: Rectangle {
-                color: selectSession.highlightedIndex === index ? config.DropdownSelectedBackgroundColor : "transparent"
+            background: EternalShape {
+                fillColor: config.DropdownSelectedBackgroundColor
+                fillOpacity: selectSession.highlightedIndex === index ? 1 : 0
+                trX: height * 0.6; trY: height
+                blX: height * 0.6; blY: height
             }
         }
 
@@ -73,11 +78,11 @@ Item {
             Keys.onReleased: parent.popup.open()
         }
 
-        background: Rectangle {
-            height: parent.visualFocus ? 2 : 0
-            width: displayedItem.implicitWidth
-
-            color: "transparent"
+        background: EternalShape {
+            fillColor: config.LoginFieldBackgroundColor
+            fillOpacity: 0.6
+            borderColor: parent.hovered || parent.visualFocus ? config.HighlightBorderColor : (config.FieldBorderColor || "transparent")
+            tlX: 6; tlY: 6; trX: 6; trY: 6; brX: 6; brY: 6; blX: 6; blY: 6
         }
 
         popup: Popup {
@@ -98,10 +103,11 @@ Item {
                 ScrollIndicator.vertical: ScrollIndicator { }
             }
 
-            background: Rectangle {
-                radius: config.RoundCorners / 2
-                color: config.DropdownBackgroundColor
-                layer.enabled: true
+            background: EternalShape {
+                fillColor: config.DropdownBackgroundColor
+                fillOpacity: 0.95
+                borderColor: config.FieldBorderColor || "transparent"
+                tlX: 10; tlY: 10; trX: 10; trY: 10; brX: 10; brY: 10; blX: 10; blY: 10
             }
 
             enter: Transition {

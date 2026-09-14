@@ -6,7 +6,7 @@ set $term tabby
 set $menu fuzzel
 set $lock swaylock -f   # look: ~/.config/swaylock/config
 
-font pango:JetBrainsMono Nerd Font 10
+font pango:Eternal UI Bold 11    # DOOM Eternal font; Bold is caps-only, suits title bars
 
 ### Look ################################################################
 
