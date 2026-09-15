@@ -38,18 +38,26 @@ After editing: `swaymsg reload` (Sway + bar), Hyprland reloads on save (bar need
 ## App theming (Qt and GTK)
 
 Without a Plasma session there is no Qt platform theme (`plasma-integration`), so Qt apps such as
-pcmanfm-qt have no icon theme, style or font. The replacement is qt6ct (Qt6) and qt5ct (Qt5):
+pcmanfm-qt and qpdfview have no icon theme, style or font. The replacement is qt6ct (Qt6) and qt5ct (Qt5):
 
-- Packages: `qt6ct qt5ct` (optional: `kvantum` for SVG-based Qt styles, `papirus-icon-theme`); the Breeze Qt style (`plasma-breeze` on Fedora, `breeze` on Ubuntu). `./install.sh --enable-theming --packages` installs them.
+- Packages: `qt6ct qt5ct breeze-icon-theme` (optional: `kvantum` for SVG-based Qt styles, `papirus-icon-theme`). `./install.sh --enable-theming --packages` installs them.
 - `QT_QPA_PLATFORMTHEME=qt6ct` is exported in `~/.zprofile` and set in `hyprland.lua`; Qt5 apps automatically use qt5ct with the same value.
 - Run `qt6ct` (and `qt5ct`) to pick style, icon theme, palette and fonts with a GUI; changes apply to newly started apps.
   The Catppuccin palette is in `~/.config/qt6ct/colors/`.
+- Style: **Fusion** (built into Qt). It takes every colour from the qt6ct palette. Do not use the Breeze style
+  (`plasma-breeze`) outside Plasma: it paints menu bars, toolbars and frames from KDE's own colour scheme
+  (`~/.config/kdeglobals`, falling back to Breeze Light when the file is missing), so with a dark palette the
+  menu text comes out near-black on dark. Kvantum is the other style that honours the palette.
 - Icon themes: `breeze`, `breeze-dark` (system) plus whatever is in `~/.local/share/icons/` (Tela, WhiteSur, McMojave-circle, candy-icons, ...).
   The same names work in GTK's `gtk-icon-theme-name` and qt6ct's `icon_theme`, so both toolkits can share one icon set.
 - GTK apps read `~/.config/gtk-3.0/settings.ini` and `~/.config/gtk-4.0/settings.ini` (Adwaita theme, breeze icons, IBM Plex Sans 13).
   `nwg-look` is a GUI for these files. Themes go in `~/.themes/` or `/usr/share/themes/`.
 - Qt apps read qt6ct settings only at startup, and pcmanfm-qt is single-instance: after changing anything, `pkill pcmanfm-qt` (or quit the app fully) and relaunch.
-- If a Breeze-styled app ever shows a light menu bar/toolbar again, some KDE app has recreated `~/.config/kdeglobals`; delete it, or switch the style in qt6ct to Fusion or Kvantum, which never read it.
+- Leftovers from a previous Plasma install override all of the above: `~/.config/kdeglobals` and `kdedefaults/`
+  (read by Breeze and any KDE library), `Trolltech.conf`, `xsettingsd/` and `gtkrc*` (written by Plasma's krdb),
+  and the `gtk-modules=colorreload-gtk-module:...` line kde-gtk-config adds to the GTK settings.
+  `tools/purge-kde-config.sh` (`--dry-run` to preview) archives them to `~/.local/state/` and removes them,
+  together with the rest of the Plasma session state; settings of KDE apps that are still installed are kept.
 - Default apps for file types (e.g. folders opening in the wrong program) are in `~/.config/mimeapps.list`; fix with `xdg-mime default pcmanfm-qt.desktop inode/directory`.
 - Cursor: `XCURSOR_SIZE` / `HYPRCURSOR_SIZE` in `hyprland.lua`, `seat * xcursor_theme` in the Sway config, `gtk-cursor-theme-name` for GTK apps. Themes in `~/.icons/`.
 - The qt6ct, qt5ct and waypaper configs contain an absolute path into the home directory; `./install.sh` rewrites it to `$HOME` when copying.

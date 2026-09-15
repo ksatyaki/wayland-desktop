@@ -30,7 +30,7 @@ What each component pulls in with `--packages`. The Ubuntu column is from packag
 | `--enable-bar` | `waybar fuzzel mako brightnessctl playerctl grim slurp wl-clipboard wdisplays waypaper awww pavucontrol nm-connection-editor blueman gnome-keyring xdg-desktop-portal-gtk` | `waybar fuzzel mako-notifier brightnessctl playerctl grim slurp wl-clipboard wdisplays pavucontrol network-manager-gnome blueman gnome-keyring xdg-desktop-portal-gtk pipx`, then `pipx install waypaper` and [awww](https://github.com/LGFae/awww) from a release or cargo |
 | `--enable-hyprland` | COPR `lionheartp/Hyprland`: `hyprland hyprlock hypridle hyprpolkitagent hyprshot hyprshutdown hyprland-guiutils xdg-desktop-portal-hyprland` | Not packaged at the needed version (>= 0.56, Lua config): [build from source](https://wiki.hyprland.org/Getting-Started/Installation/) |
 | `--enable-sway` | `sway swaylock swayidle swaybg kanshi xdg-desktop-portal-wlr` | same names; plus a polkit agent such as `polkit-kde-agent-1` |
-| `--enable-theming` | `pcmanfm-qt qt6ct qt5ct kvantum plasma-breeze breeze-icon-theme` | `pcmanfm-qt qt6ct qt5ct qt6-style-kvantum breeze breeze-icon-theme` |
+| `--enable-theming` | `pcmanfm-qt qt6ct qt5ct kvantum breeze-icon-theme` | `pcmanfm-qt qt6ct qt5ct qt6-style-kvantum breeze-icon-theme` |
 | `--enable-login` | `sddm qt6-qtsvg qt6-qtvirtualkeyboard qt6-qtmultimedia` | `sddm libqt6svg6 qml6-module-qtquick-controls qml6-module-qtquick-layouts qml6-module-qtquick-shapes qml6-module-qtquick-effects qml6-module-qtmultimedia qml6-module-qtquick-virtualkeyboard libxcb-cursor0` (needs SDDM >= 0.21 with Qt 6) |
 | `--enable-fonts` | nothing, the fonts are in the repo | nothing |
 
@@ -72,7 +72,7 @@ Installs `~/.config/waybar/`, `~/.config/mako/`, `~/.config/fuzzel/`, `~/.config
 
 ### App theming (Qt and GTK)
 
-A consistent Catppuccin Mocha look for Qt and GTK apps without a Plasma or GNOME session: qt6ct and qt5ct with the Breeze style and a Catppuccin palette, GTK settings (Adwaita, breeze icons, IBM Plex Sans), `QT_QPA_PLATFORMTHEME=qt6ct` exported from `~/.zprofile`, and default apps (folders open in pcmanfm-qt).
+A consistent Catppuccin Mocha look for Qt and GTK apps without a Plasma or GNOME session: qt6ct and qt5ct with the Fusion style and a Catppuccin palette, GTK settings (Adwaita, breeze icons, IBM Plex Sans), `QT_QPA_PLATFORMTHEME=qt6ct` exported from `~/.zprofile`, and default apps (folders open in pcmanfm-qt).
 
 ```sh
 ./install.sh --enable-theming --packages
@@ -128,6 +128,7 @@ Then fetch the fonts listed under Dependencies, edit the monitor lines for your 
 | `home/.zprofile` | `~/.zprofile` | theming |
 | `sddm/` | `~/.config/sddm-doom-theme/`, `/usr/share/sddm/themes/`, `/etc/sddm.conf.d/` | login |
 | `tools/eternal-panel.py` | not installed: regenerates the chamfered PNG panels used by hyprlock | |
+| `tools/purge-kde-config.sh` | not installed: removes leftover Plasma/KDE config that overrides the Qt/GTK theming (`--dry-run` to preview; archives to `~/.local/state/`) | |
 | `refcard.html` | not installed: one-page keybinding and command cheatsheet, open in a browser | |
 
 ## More documentation

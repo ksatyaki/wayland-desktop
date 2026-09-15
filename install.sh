@@ -59,8 +59,8 @@ PKGS_BAR_dnf="waybar fuzzel mako brightnessctl playerctl grim slurp wl-clipboard
 pavucontrol nm-connection-editor blueman gnome-keyring xdg-desktop-portal-gtk"
 PKGS_BAR_apt="waybar fuzzel mako-notifier brightnessctl playerctl grim slurp wl-clipboard wdisplays \
 pavucontrol network-manager-gnome blueman gnome-keyring xdg-desktop-portal-gtk pipx"
-PKGS_THEMING_dnf="pcmanfm-qt qt6ct qt5ct kvantum plasma-breeze breeze-icon-theme"
-PKGS_THEMING_apt="pcmanfm-qt qt6ct qt5ct qt6-style-kvantum breeze breeze-icon-theme"
+PKGS_THEMING_dnf="pcmanfm-qt qt6ct qt5ct kvantum breeze-icon-theme"
+PKGS_THEMING_apt="pcmanfm-qt qt6ct qt5ct qt6-style-kvantum breeze-icon-theme"
 PKGS_LOGIN_dnf="sddm qt6-qtsvg qt6-qtvirtualkeyboard qt6-qtmultimedia"
 PKGS_LOGIN_apt="sddm libqt6svg6 qml6-module-qtquick-controls qml6-module-qtquick-layouts qml6-module-qtquick-shapes \
 qml6-module-qtquick-effects qml6-module-qtmultimedia qml6-module-qtquick-virtualkeyboard libxcb-cursor0"

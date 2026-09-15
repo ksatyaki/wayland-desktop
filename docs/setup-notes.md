@@ -40,11 +40,11 @@ the login and lock screens in [login-and-lock-screen.md](login-and-lock-screen.m
 
 | File | Purpose |
 |---|---|
-| `~/.config/qt6ct/qt6ct.conf`, `~/.config/qt5ct/qt5ct.conf` | Qt app look: Breeze style, breeze-dark icons, Catppuccin palette (`colors/Catppuccin-Mocha.conf`), fonts. Edit with the `qt6ct` / `qt5ct` GUI |
+| `~/.config/qt6ct/qt6ct.conf`, `~/.config/qt5ct/qt5ct.conf` | Qt app look: Fusion style, breeze-dark icons, Catppuccin palette (`colors/Catppuccin-Mocha.conf`), fonts. Edit with the `qt6ct` / `qt5ct` GUI |
 | `~/.config/gtk-3.0/settings.ini`, `~/.config/gtk-4.0/settings.ini` | GTK app look: theme, icon theme, font, cursor |
 | `~/.config/mimeapps.list` | Default apps per file type (folders open in pcmanfm-qt) |
 | `~/.zprofile` | Exports `QT_QPA_PLATFORMTHEME=qt6ct` for the whole session (SDDM starts the session via a zsh login shell); Hyprland also sets it in `hyprland.lua` |
-| `~/.config/kdeglobals` | Deleted on purpose: the Breeze Qt style paints menu bars and toolbars from it if it exists, overriding the qt6ct palette |
+| `~/.config/kdeglobals`, `kdedefaults/`, `Trolltech.conf`, `xsettingsd/`, `kwinrc`, `plasma*` ... | Deleted on purpose by `tools/purge-kde-config.sh`: leftovers of a Plasma install that the Breeze Qt style and kde-gtk-config keep reading, overriding the qt6ct/GTK settings |
 | `/etc/sddm.conf.d/10-theme.conf`, `20-users.conf` | SDDM login theme and remember-last-user settings |
 | `~/.config/sddm-doom-theme/` | Master copy of the login theme, DOOM preset and its install script |
 | `~/.local/share/keyrings/default` | Not in the repo. Contains `login`: marks the `login` keyring as the default for Secret Service apps (Claude, browsers). gnome-keyring is unlocked at login by the PAM stack in `/etc/pam.d/sddm` (already present on Fedora) |
