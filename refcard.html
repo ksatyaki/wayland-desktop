@@ -167,7 +167,7 @@ sudo dnf install pcmanfm-qt qt6ct qt5ct kvantum sddm sddm-themes
 <tr><td class="mono">~/.config/sddm-doom-theme/install-doom-sddm.sh</td><td><a href="sddm/install-sddm-theme.sh" target="_blank">install-doom-sddm.sh</a></td><td>Installs theme + fonts, writes the SDDM conf (run with sudo)</td></tr>
 </table></div>
 <h3>Restore</h3>
-<p>This page lives in the <code>ksatyaki/wayland-desktop</code> repo together with every file it links. <code>./install_hyprland_config.sh --packages --system</code> or <code>./install_sway_config.sh --packages --system</code> rebuilds the desktop; without flags only user config is copied (backups kept).</p>
+<p>This page lives in the <code>ksatyaki/wayland-desktop</code> repo together with every file it links. <code>./install.sh --all --packages</code> rebuilds the desktop; <code>./install.sh --enable-hyprland</code>, <code>--enable-sway</code>, <code>--enable-bar</code>, <code>--enable-theming</code>, <code>--enable-login</code> pick single parts (existing files are backed up). See the README.</p>
 <p class="note">Also on disk, no file to copy: <code>~/.local/share/keyrings/default</code> contains <code>login</code>; <code>~/.config/kdeglobals</code> is deliberately absent; folder handler set with <code>xdg-mime default pcmanfm-qt.desktop inode/directory</code>.</p>
 </section>
 
@@ -323,7 +323,7 @@ sudo dnf install pcmanfm-qt qt6ct qt5ct kvantum sddm sddm-themes
 <tr><td>Reload Hyprland</td><td>automatic on save, or <code>hyprctl reload</code></td></tr>
 <tr><td>Restart bar (Hyprland)</td><td class="mono">pkill waybar; setsid waybar -c ~/.config/waybar/config-hyprland.jsonc &amp;</td></tr>
 <tr><td>Reload mako</td><td class="mono">makoctl reload</td></tr>
-<tr><td>Headset back to stereo</td><td class="mono">bluetoothctl disconnect 20:AF:1B:02:D2:BA; bluetoothctl connect 20:AF:1B:02:D2:BA</td></tr>
+<tr><td>Headset back to stereo</td><td class="mono">bluetoothctl disconnect &lt;MAC&gt;; bluetoothctl connect &lt;MAC&gt; (address from <code>bluetoothctl devices</code>)</td></tr>
 <tr><td>Font names / resolution</td><td class="mono">fc-list : family | sort -u · fc-match "Name"</td></tr>
 <tr><td>Lua API reference</td><td class="mono">/usr/share/hypr/stubs/hl.meta.lua · /usr/share/hypr/hyprland.lua</td></tr>
 </table></div>
