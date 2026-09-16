@@ -281,10 +281,11 @@ hl.window_rule({ name = "emacs-ws2",    match = { class = "^([Ee]macs)$" },     
 hl.window_rule({ name = "chrome-ws3",   match = { class = "^([Gg]oogle-chrome)" },                   workspace = "3" })
 hl.window_rule({ name = "telegram-ws4", match = { class = "^(org\\.telegram\\.desktop|TelegramDesktop)$" }, workspace = "4" })
 hl.window_rule({ name = "matlab-ws5",   match = { class = "^([Mm][Aa][Tt][Ll][Aa][Bb])" },           workspace = "5" })
--- Windows programs (Proton/Steam games: class steam_app_<id>; Wine: <name>.exe) always open on workspace 2,
--- and workspace 2 is pinned to the Lenovo 1440p screen whenever that monitor is connected
-hl.workspace_rule({ workspace = "2", monitor = "desc:Lenovo Group Limited G27q-20 U63330HD" })
-hl.window_rule({ name = "windows-apps-ws2", match = { class = "^(steam_app_\\d+|.*\\.[Ee][Xx][Ee])$" }, workspace = "2" })
+-- home: workspace 1 lives on the Lenovo 1440p screen, workspace 2 on the HP, whenever those monitors are connected
+hl.workspace_rule({ workspace = "1", monitor = "desc:Lenovo Group Limited G27q-20 U63330HD" })
+hl.workspace_rule({ workspace = "2", monitor = "desc:HP Inc. HP E24u G5 CN43172GTD" })
+-- Windows programs (Proton/Steam games: class steam_app_<id>; Wine: <name>.exe) always open on workspace 1 (the Lenovo)
+hl.window_rule({ name = "windows-apps-ws1", match = { class = "^(steam_app_\\d+|.*\\.[Ee][Xx][Ee])$" }, workspace = "1" })
 
 hl.window_rule({ name = "pavucontrol-float", match = { class = "^(org\\.pulseaudio\\.pavucontrol|pavucontrol)$" }, float = true, size = {900, 600}, center = true })
 

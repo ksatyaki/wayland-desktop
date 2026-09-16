@@ -96,7 +96,7 @@ the login and lock screens in [login-and-lock-screen.md](login-and-lock-screen.m
 
 ## Windows programs (Steam/Proton, Wine)
 
-- Proton games get the X11 class `steam_app_<appid>`, Wine programs `<name>.exe`. Both compositors send anything matching `^(steam_app_\d+|.*\.exe)$` to workspace 2, and workspace 2 is pinned to the Lenovo 1440p monitor whenever it is connected (`hl.workspace_rule` / `workspace 2 output` rules next to the other assigns).
+- Proton games get the X11 class `steam_app_<appid>`, Wine programs `<name>.exe`. Both compositors send anything matching `^(steam_app_\d+|.*\.exe)$` to the workspace pinned to the Lenovo 1440p monitor: workspace 1 in Hyprland (workspace 2 is pinned to the HP), workspace 2 in Sway (`hl.workspace_rule` / `workspace 2 output` rules next to the other assigns).
 - Check a game's class with `hyprctl clients` or `swaymsg -t get_tree | grep class`.
 
 ## Wallpapers
