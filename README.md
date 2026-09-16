@@ -62,7 +62,7 @@ Installs `~/.config/sway/`, `~/.config/kanshi/`, `~/.config/swaylock/` and `/usr
 
 ### Bar, launcher, notifications, wallpaper
 
-Waybar (bottom bar with workspaces per monitor, app launchers, hover volume slider, network, bluetooth, a CPU/GPU metrics gauge, brightness and battery), the fuzzel launcher on Super+D, mako notifications, and waypaper with the awww daemon for the wallpaper. Shared by both compositors; the config files exist for Sway (`config.jsonc`) and Hyprland (`config-hyprland.jsonc`). Includes the DOOM fonts and wallpaper.
+Waybar (bottom bar with workspaces per monitor, app launchers, hover volume slider, network, bluetooth, a CPU/GPU metrics gauge, brightness and battery), the fuzzel launcher on Super+D in the DOOM login palette, mako notifications, and waypaper with the awww daemon for the wallpaper. Shared by both compositors; the config files exist for Sway (`config.jsonc`) and Hyprland (`config-hyprland.jsonc`). Includes the DOOM fonts and wallpaper.
 
 ```sh
 ./install.sh --enable-bar --packages

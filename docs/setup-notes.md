@@ -25,7 +25,7 @@ the login and lock screens in [login-and-lock-screen.md](login-and-lock-screen.m
 | `~/.config/waybar/style.css` | Solid Catppuccin Mocha stylesheet, workspace highlight for both compositors, slider styling |
 | `~/.config/waybar/scripts/perf.sh`, `gpu.sh` | Data for the metrics gauge (CPU temp and usage, memory, GPU temp, usage and VRAM via nvidia-smi) |
 | `~/.config/mako/config` | Notification daemon in the same palette |
-| `~/.config/fuzzel/fuzzel.ini` | Super+D launcher: font, colours, size |
+| `~/.config/fuzzel/fuzzel.ini` | Super+D launcher: font, size, DOOM palette (same colours as the login theme's `doom.conf`) |
 | `~/.config/waypaper/config.ini` | Wallpaper: folder, backend (awww) and last picked image; written by waypaper |
 
 ### Hyprland
