@@ -5,6 +5,9 @@ A DOOM-flavoured Sway and Hyprland desktop: i3-style keybindings, a Waybar bar i
 <p align="center">
   <img src="docs/screenshots/login-screen.jpg" alt="DOOM login screen (SDDM)" width="800">
   <br><sub>Login screen (SDDM, sddm-astronaut-theme with the DOOM preset)</sub>
+  <br><br>
+  <img src="docs/screenshots/login-screen-dark-ages.jpg" alt="DOOM: The Dark Ages login screen (SDDM)" width="800">
+  <br><sub>The alternative Dark Ages login screen (<code>--login-theme dark-ages</code>)</sub>
 </p>
 <p align="center">
   <img src="docs/screenshots/lock-screen.jpg" alt="DOOM lock screen (hyprlock)" width="800">
@@ -82,16 +85,20 @@ Installs `~/.config/qt6ct/`, `~/.config/qt5ct/`, `~/.config/gtk-3.0/`, `~/.confi
 
 ### DOOM login screen (SDDM)
 
-[sddm-astronaut-theme](https://github.com/Keyitdev/sddm-astronaut-theme) with a custom `doom` preset: DOOM box art, DOOM Eternal fonts, chamfered Eternal-style input fields and buttons, username prefilled with the last login. Installed system-wide with sudo.
+Two looks, both built on [sddm-astronaut-theme](https://github.com/Keyitdev/sddm-astronaut-theme), username prefilled with the last login, installed system-wide with sudo:
+
+- `eternal` (default): the `doom` preset in `sddm/sddm-astronaut-theme/`. DOOM box art, DOOM Eternal fonts, chamfered Eternal-style input fields and buttons.
+- `dark-ages`: `sddm/sddm-dark-ages-theme/`, a DOOM: The Dark Ages restyle. Dark teal stone, the Cormorant serif, menu rows that are a hairline at rest and a spear-tipped teal bar when focused, an orange bar for the login button, "STAND AND FIGHT" over the clock.
 
 ```sh
-./install.sh --enable-login --packages
+./install.sh --enable-login --packages                          # Eternal
+./install.sh --enable-login --login-theme dark-ages --packages   # Dark Ages
 ```
 
-Installs `/usr/share/sddm/themes/sddm-astronaut-theme/`, the theme fonts under `/usr/share/fonts/`, `/etc/sddm.conf.d/10-theme.conf` and `20-users.conf`, plus an editable master copy in `~/.config/sddm-doom-theme/`. Preview without logging out:
+Installs `/usr/share/sddm/themes/<theme>/`, the theme fonts under `/usr/share/fonts/`, `/etc/sddm.conf.d/10-theme.conf` and `20-users.conf`, plus an editable master copy of both in `~/.config/sddm-doom-theme/`. Switch later with `sudo sh ~/.config/sddm-doom-theme/install-sddm-theme.sh dark-ages` (or `eternal`). Preview without logging out:
 
 ```sh
-sddm-greeter-qt6 --test-mode --theme /usr/share/sddm/themes/sddm-astronaut-theme
+sddm-greeter-qt6 --test-mode --theme /usr/share/sddm/themes/sddm-dark-ages-theme
 ```
 
 How the preset and the QML shapes work, and how to change the look: [Login and lock screen](docs/login-and-lock-screen.md).
@@ -128,6 +135,7 @@ Then fetch the fonts listed under Dependencies, edit the monitor lines for your 
 | `home/.zprofile` | `~/.zprofile` | theming |
 | `sddm/` | `~/.config/sddm-doom-theme/`, `/usr/share/sddm/themes/`, `/etc/sddm.conf.d/` | login |
 | `tools/eternal-panel.py` | not installed: regenerates the chamfered PNG panels used by hyprlock | |
+| `tools/dark-ages-background.py` | not installed: regenerates the Dark Ages login background | |
 | `tools/purge-kde-config.sh` | not installed: removes leftover Plasma/KDE config that overrides the Qt/GTK theming (`--dry-run` to preview; archives to `~/.local/state/`) | |
 | `refcard.html` | not installed: one-page keybinding and command cheatsheet, open in a browser | |
 
@@ -140,4 +148,4 @@ Then fetch the fonts listed under Dependencies, edit the monitor lines for your 
 
 ## Credits
 
-Login theme: [sddm-astronaut-theme](https://github.com/Keyitdev/sddm-astronaut-theme) by Keyitdev (GPL-3.0, see `sddm/sddm-astronaut-theme/LICENSE`). The Eternal UI fonts are fan-made recreations of the DOOM Eternal menu font. The wallpaper is the DOOM box art by Don Ivan Punchatz, © id Software, used here as fan art. Colours are [Catppuccin Mocha](https://github.com/catppuccin/catppuccin).
+Login themes: [sddm-astronaut-theme](https://github.com/Keyitdev/sddm-astronaut-theme) by Keyitdev (GPL-3.0, see `sddm/sddm-astronaut-theme/LICENSE`); the Dark Ages theme is a restyle of it under the same licence. The Eternal UI fonts are fan-made recreations of the DOOM Eternal menu font. The Dark Ages theme uses [Cormorant](https://github.com/CatharsisFonts/Cormorant) by Christian Thalmann (SIL Open Font License). The wallpaper is the DOOM box art by Don Ivan Punchatz, © id Software, used here as fan art. Colours are [Catppuccin Mocha](https://github.com/catppuccin/catppuccin).

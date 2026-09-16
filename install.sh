@@ -13,11 +13,13 @@ Components (combine freely):
   --enable-sway       Sway config with kanshi and swaylock, "Sway (NVIDIA)" session file (sudo)
   --enable-bar        Waybar, fuzzel launcher, mako notifications, waypaper wallpaper (shared by both compositors)
   --enable-theming    Qt/GTK app look: qt6ct, qt5ct, GTK settings, default apps, ~/.zprofile
-  --enable-login      DOOM login screen for SDDM (system-wide, sudo)
+  --enable-login      DOOM login screen for SDDM (system-wide, sudo); see --login-theme
   --enable-fonts      DOOM Eternal UI fonts -> ~/.fonts/doom (the other components pull this in themselves)
   --all               Everything above
 
 Options:
+  --login-theme NAME  Which login screen --enable-login installs: eternal (DOOM Eternal look, default)
+                      or dark-ages (DOOM: The Dark Ages look)
   --packages          Also install the distro packages the selected components need
                       (dnf on Fedora, apt on Ubuntu/Debian; asks for sudo)
   -h, --help          This text
@@ -27,9 +29,11 @@ Existing config is kept as <file>.bak-<timestamp>. Only --enable-login, the Sway
 EOF
 }
 
-HYPR=0; SWAY=0; BAR=0; THEMING=0; LOGIN=0; FONTS=0; PACKAGES=0
+HYPR=0; SWAY=0; BAR=0; THEMING=0; LOGIN=0; FONTS=0; PACKAGES=0; LOGIN_THEME=eternal
 [ $# -eq 0 ] && { usage; exit 2; }
+expect_theme=0
 for a in "$@"; do
+    if [ $expect_theme = 1 ]; then LOGIN_THEME=$a; expect_theme=0; continue; fi
     case "$a" in
         --enable-hyprland) HYPR=1;;
         --enable-sway)     SWAY=1;;
@@ -39,6 +43,8 @@ for a in "$@"; do
         --enable-fonts)    FONTS=1;;
         --all)             HYPR=1; SWAY=1; BAR=1; THEMING=1; LOGIN=1; FONTS=1;;
         --packages)        PACKAGES=1;;
+        --login-theme)     expect_theme=1;;
+        --login-theme=*)   LOGIN_THEME=${a#--login-theme=};;
         -h|--help)         usage; exit 0;;
         *) echo "unknown option: $a" >&2; usage >&2; exit 2;;
     esac
@@ -46,6 +52,11 @@ done
 if [ $((HYPR + SWAY + BAR + THEMING + LOGIN + FONTS)) -eq 0 ]; then
     echo "nothing selected: pass at least one --enable-* flag or --all" >&2; exit 2
 fi
+case "$LOGIN_THEME" in
+    eternal)   LOGIN_DIR=sddm-astronaut-theme;;
+    dark-ages) LOGIN_DIR=sddm-dark-ages-theme;;
+    *) echo "unknown --login-theme: $LOGIN_THEME (eternal or dark-ages)" >&2; exit 2;;
+esac
 
 # ---------------------------------------------------------------- distro packages
 . /etc/os-release 2>/dev/null || true
@@ -186,8 +197,8 @@ if [ $LOGIN = 1 ]; then
     echo "Login screen:"
     mkdir -p "$HOME/.config/sddm-doom-theme"; cp -r "$REPO/sddm/." "$HOME/.config/sddm-doom-theme/"
     echo "  ~/.config/sddm-doom-theme (editable master copy)"
-    echo "  /usr/share/sddm/themes/sddm-astronaut-theme and /etc/sddm.conf.d (sudo)"
-    sudo sh "$REPO/sddm/install-sddm-theme.sh"
+    echo "  /usr/share/sddm/themes/$LOGIN_DIR and /etc/sddm.conf.d (sudo)"
+    sudo sh "$REPO/sddm/install-sddm-theme.sh" "$LOGIN_THEME"
 fi
 
 # ---------------------------------------------------------------- what is left to do by hand
@@ -201,5 +212,5 @@ if [ $((HYPR + SWAY)) -gt 0 ]; then
 fi
 [ $HYPR = 1 ]  && echo "Log out and pick \"Hyprland\" in the login screen."
 [ $SWAY = 1 ]  && echo "Log out and pick \"Sway (NVIDIA)\" (or plain \"Sway\" without an NVIDIA GPU) in the login screen."
-[ $LOGIN = 1 ] && echo "The DOOM login screen appears at the next logout. Preview now: sddm-greeter-qt6 --test-mode --theme /usr/share/sddm/themes/sddm-astronaut-theme"
+[ $LOGIN = 1 ] && echo "The DOOM login screen appears at the next logout. Preview now: sddm-greeter-qt6 --test-mode --theme /usr/share/sddm/themes/$LOGIN_DIR"
 exit 0
