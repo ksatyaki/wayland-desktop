@@ -286,6 +286,9 @@ hl.workspace_rule({ workspace = "1", monitor = "desc:Lenovo Group Limited G27q-2
 hl.workspace_rule({ workspace = "2", monitor = "desc:HP Inc. HP E24u G5 CN43172GTD" })
 -- Windows programs (Proton/Steam games: class steam_app_<id>; Wine: <name>.exe) always open on workspace 1 (the Lenovo)
 hl.window_rule({ name = "windows-apps-ws1", match = { class = "^(steam_app_\\d+|.*\\.[Ee][Xx][Ee])$" }, workspace = "1" })
+-- DOOM Eternal (782330) runs as a borderless XWayland window; Hyprland would otherwise tile it (suppress-maximize below),
+-- leaving the game rendering at 2560x1396. Force it fullscreen on open so it gets the whole 2560x1440 monitor.
+hl.window_rule({ name = "doom-eternal-fullscreen", match = { class = "^(steam_app_782330)$" }, fullscreen = true })
 
 hl.window_rule({ name = "pavucontrol-float", match = { class = "^(org\\.pulseaudio\\.pavucontrol|pavucontrol)$" }, float = true, size = {900, 600}, center = true })
 
