@@ -184,6 +184,7 @@ hl.bind(mod .. " + D",         hl.dsp.exec_cmd(menu))
 hl.bind(mod .. " + SHIFT + D", hl.dsp.exec_cmd(menu))
 hl.bind(mod .. " + CTRL + L",  hl.dsp.exec_cmd(lock))
 hl.bind(mod .. " + SHIFT + Q", hl.dsp.window.close())
+hl.bind(mod .. " + ALT + M",   hl.dsp.exec_cmd("firefox"))
 
 -- keyboard layout (old setxkbmap se / us binds)
 hl.bind("ALT + SUPER + S", hl.dsp.exec_cmd("hyprctl switchxkblayout all 1"))
