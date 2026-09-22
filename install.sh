@@ -66,9 +66,9 @@ case " $ID $ID_LIKE " in
     *)                 PM="";;
 esac
 
-PKGS_BAR_dnf="waybar fuzzel mako brightnessctl playerctl grim slurp wl-clipboard wdisplays waypaper awww \
+PKGS_BAR_dnf="waybar fuzzel mako brightnessctl ddcutil playerctl grim slurp wl-clipboard wdisplays waypaper awww \
 pavucontrol nm-connection-editor blueman gnome-keyring xdg-desktop-portal-gtk"
-PKGS_BAR_apt="waybar fuzzel mako-notifier brightnessctl playerctl grim slurp wl-clipboard wdisplays \
+PKGS_BAR_apt="waybar fuzzel mako-notifier brightnessctl ddcutil playerctl grim slurp wl-clipboard wdisplays \
 pavucontrol network-manager-gnome blueman gnome-keyring xdg-desktop-portal-gtk pipx"
 PKGS_THEMING_dnf="pcmanfm-qt qt6ct qt5ct kvantum breeze-icon-theme"
 PKGS_THEMING_apt="pcmanfm-qt qt6ct qt5ct qt6-style-kvantum breeze-icon-theme"
@@ -152,6 +152,31 @@ install_wallpaper() {
     cp "$REPO"/wallpapers/* "$HOME/Pictures/Wallpapers/"; echo "  ~/Pictures/Wallpapers (DOOM95.jpeg, used by the lock screens and waypaper)"
 }
 
+# ---------------------------------------------------------------- DDC/CI (external monitor brightness)
+# The bar controls each monitor's own brightness: the laptop panel through /sys/class/backlight,
+# external monitors over DDC/CI, which needs read/write on the /dev/i2c-* buses. ddcutil ships the
+# udev rule for that; it only applies to device nodes created after the package landed, so re-trigger it.
+enable_ddc() {
+    command -v ddcutil >/dev/null 2>&1 || { echo "  external monitor brightness: install ddcutil to enable it"; return 0; }
+    sudo modprobe i2c-dev 2>/dev/null || true
+    [ -e /etc/modules-load.d/i2c-dev.conf ] || echo i2c-dev | sudo tee /etc/modules-load.d/i2c-dev.conf >/dev/null
+    sudo udevadm control --reload-rules
+    sudo udevadm trigger --subsystem-match=i2c-dev --subsystem-match=dri
+    if ! ddcutil detect 2>&1 | grep -q "not readable and writable"; then
+        echo "  external monitor brightness: DDC/CI ready ($(ddcutil detect --terse 2>/dev/null | grep -c '^Display') monitor(s) answer)"
+        return 0
+    fi
+    # Fedora's rule tags the buses uaccess, so the active session gets an ACL and no group is involved;
+    # distros whose rule sets GROUP="i2c" need the user in that group, which lands on the next login.
+    if grep -qs 'GROUP="i2c"' /usr/lib/udev/rules.d/*ddcutil*.rules /etc/udev/rules.d/*ddcutil*.rules; then
+        getent group i2c >/dev/null || sudo groupadd --system i2c
+        id -nG | tr ' ' '\n' | grep -qx i2c || sudo usermod -aG i2c "$USER"
+        echo "  external monitor brightness: added $USER to the i2c group -- log out and back in"
+    else
+        echo "  external monitor brightness: /dev/i2c-* still unreadable -- log out and back in, then check with: ddcutil detect"
+    fi
+}
+
 # ---------------------------------------------------------------- components
 [ $PACKAGES = 1 ] && install_packages
 
@@ -161,7 +186,9 @@ if [ $BAR = 1 ]; then
     install_fonts
     echo "Bar, launcher, notifications, wallpaper:"
     for d in waybar mako fuzzel waypaper; do put_config "$d"; done
-    chmod +x "$HOME/.config/waybar/scripts/perf.sh" "$HOME/.config/waybar/scripts/gpu.sh"
+    chmod +x "$HOME/.config/waybar/scripts/perf.sh" "$HOME/.config/waybar/scripts/gpu.sh" \
+             "$HOME/.config/waybar/scripts/brightness.sh"
+    enable_ddc
     install_wallpaper
 fi
 

@@ -20,9 +20,11 @@ the login and lock screens in [login-and-lock-screen.md](login-and-lock-screen.m
 
 | File | Purpose |
 |---|---|
-| `~/.config/waybar/config.jsonc` | Bar modules for Sway, bottom position, hover volume slider, icons written as `\u` escapes |
-| `~/.config/waybar/config-hyprland.jsonc` | Same bar using the `hyprland/*` workspace, window, submap and language modules |
+| `~/.config/waybar/config.jsonc`, `config-hyprland.jsonc` | Bar list for Sway / Hyprland: one entry per output, each including the module file below and pointing the brightness module at that output |
+| `~/.config/waybar/modules-sway.jsonc` | The modules themselves for Sway: bottom position, hover volume slider, icons written as `\u` escapes |
+| `~/.config/waybar/modules-hyprland.jsonc` | Same modules using the `hyprland/*` workspace, window, submap and language modules |
 | `~/.config/waybar/style.css` | Solid Catppuccin Mocha stylesheet, workspace highlight for both compositors, slider styling |
+| `~/.config/waybar/scripts/brightness.sh` | Per-monitor brightness for the bar module and the Fn keys (backlight or DDC/CI) |
 | `~/.config/waybar/scripts/perf.sh`, `gpu.sh` | Data for the metrics gauge (CPU temp and usage, memory, GPU temp, usage and VRAM via nvidia-smi) |
 | `~/.config/mako/config` | Notification daemon in the same palette |
 | `~/.config/fuzzel/fuzzel.ini` | Super+D launcher: font, size, DOOM palette (same colours as the login theme's `doom.conf`) |
@@ -84,6 +86,25 @@ the login and lock screens in [login-and-lock-screen.md](login-and-lock-screen.m
   give it a new name, add the name to `modules-left` in both files and to the CSS selector list. Nerd Font glyph codes: https://www.nerdfonts.com/cheat-sheet
   Launcher colours are per-module rules in the same CSS block: Firefox `#ff7139`, VS Code Insiders `#24bfa5`, Claude `#d97757`, Steam `#66c0f4`;
   terminal and folder use `@subtext` and turn `@text` on hover. A new launcher without its own rule inherits the grey.
+- Brightness is per monitor. Waybar cannot vary a module between the copies of one bar, so `config*.jsonc` is a list of bars,
+  one per output (`eDP-1`, `DP-1`..`DP-3`, `HDMI-A-1`, `HDMI-A-2`, plus a catch-all for anything else), each `include`-ing
+  `modules-*.jsonc` and overriding only the brightness module's `exec` and scroll commands with its own output name.
+  A connector that is not plugged in simply gets no bar, so hotplug needs no reload.
+- `scripts/brightness.sh status|set <output>` picks the backend per monitor and caches it in `$XDG_RUNTIME_DIR/brightness`:
+  a panel under `/sys/class/backlight` (`brightnessctl`), otherwise the i2c bus that `ddcutil detect` reports for that DRM
+  connector — matched on `DRM_connector` first, on the EDID serial otherwise. A monitor that answers neither prints nothing,
+  which hides the module on that bar. Scrolling and the Fn keys
+  both move in linear 5% steps, so the number on the bar is the value written to the hardware.
+- DDC/CI is slow (~0.3 s per call), so the bar shows a cached value, re-read from the monitor every 5 min, and a scroll
+  burst is coalesced behind a `flock` into a single write — the bar updates immediately (`pkill -RTMIN+8 waybar`) and only
+  the final position goes out over i2c.
+- External monitor brightness needs read/write on `/dev/i2c-*`. `sudo dnf install ddcutil` ships
+  `/usr/lib/udev/rules.d/60-ddcutil-i2c.rules`, which tags the GPU's i2c buses `uaccess` so logind gives the active session an
+  ACL on them — no `i2c` group on Fedora. The rule only applies to device nodes created after it landed, so after installing:
+  `sudo udevadm control --reload-rules && sudo udevadm trigger -s i2c-dev -s dri` (a reboot does the same). `ddcutil detect`
+  then lists the monitors that answer; laptop panels never do ("Invalid display"), and monitors that do not keep a bar without
+  the brightness module.
+- The Fn brightness keys follow the focused monitor, not the laptop panel.
 - Waybar icons are stored as `\u` escapes because private-use glyphs get stripped by some tools.
 - Keyboard layout: Super+Space toggles us/se (Alt+Super+S / Alt+Super+U still select one directly); clicking the bar's keyboard icon toggles too. The Hyprland language module is pinned to `at-translated-set-2-keyboard` (built-in keyboard) because Hyprland makes the last-connected input device 'main' and a Bluetooth headset then reports no layout. The old Super+Space actions (Hyprland cycle_next, Sway focus mode_toggle) moved to Super+Ctrl+Space.
 

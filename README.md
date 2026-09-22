@@ -30,7 +30,7 @@ What each component pulls in with `--packages`. The Ubuntu column is from packag
 
 | Component | Fedora (dnf) | Ubuntu / Debian (apt) |
 |---|---|---|
-| `--enable-bar` | `waybar fuzzel mako brightnessctl playerctl grim slurp wl-clipboard wdisplays waypaper awww pavucontrol nm-connection-editor blueman gnome-keyring xdg-desktop-portal-gtk` | `waybar fuzzel mako-notifier brightnessctl playerctl grim slurp wl-clipboard wdisplays pavucontrol network-manager-gnome blueman gnome-keyring xdg-desktop-portal-gtk pipx`, then `pipx install waypaper` and [awww](https://github.com/LGFae/awww) from a release or cargo |
+| `--enable-bar` | `waybar fuzzel mako brightnessctl ddcutil playerctl grim slurp wl-clipboard wdisplays waypaper awww pavucontrol nm-connection-editor blueman gnome-keyring xdg-desktop-portal-gtk` | `waybar fuzzel mako-notifier brightnessctl ddcutil playerctl grim slurp wl-clipboard wdisplays pavucontrol network-manager-gnome blueman gnome-keyring xdg-desktop-portal-gtk pipx`, then `pipx install waypaper` and [awww](https://github.com/LGFae/awww) from a release or cargo |
 | `--enable-hyprland` | COPR `lionheartp/Hyprland`: `hyprland hyprlock hypridle hyprpolkitagent hyprshot hyprshutdown hyprland-guiutils xdg-desktop-portal-hyprland` | Not packaged at the needed version (>= 0.56, Lua config): [build from source](https://wiki.hyprland.org/Getting-Started/Installation/) |
 | `--enable-sway` | `sway swaylock swayidle swaybg kanshi xdg-desktop-portal-wlr` | same names; plus a polkit agent such as `polkit-kde-agent-1` |
 | `--enable-theming` | `pcmanfm-qt qt6ct qt5ct kvantum breeze-icon-theme` | `pcmanfm-qt qt6ct qt5ct qt6-style-kvantum breeze-icon-theme` |
@@ -65,7 +65,7 @@ Installs `~/.config/sway/`, `~/.config/kanshi/`, `~/.config/swaylock/` and `/usr
 
 ### Bar, launcher, notifications, wallpaper
 
-Waybar (bottom bar with workspaces per monitor, app launchers, hover volume slider, network, bluetooth, a CPU/GPU metrics gauge, brightness and battery), the fuzzel launcher on Super+D in the DOOM login palette, mako notifications, and waypaper with the awww daemon for the wallpaper. Shared by both compositors; the config files exist for Sway (`config.jsonc`) and Hyprland (`config-hyprland.jsonc`). Includes the DOOM fonts and wallpaper.
+Waybar (bottom bar with workspaces per monitor, app launchers, hover volume slider, network, bluetooth, a CPU/GPU metrics gauge, brightness and battery), the fuzzel launcher on Super+D in the DOOM login palette, mako notifications, and waypaper with the awww daemon for the wallpaper. Shared by both compositors; the entry points are `config.jsonc` (Sway) and `config-hyprland.jsonc` (Hyprland), each one bar per output including the shared `modules-*.jsonc`. The brightness module on a monitor's bar shows and scrolls that monitor's own brightness — the laptop panel through `/sys/class/backlight`, external monitors over DDC/CI (`ddcutil`; `--enable-bar` re-triggers its udev rule so the `/dev/i2c-*` buses are reachable from the session). Includes the DOOM fonts and wallpaper.
 
 ```sh
 ./install.sh --enable-bar --packages

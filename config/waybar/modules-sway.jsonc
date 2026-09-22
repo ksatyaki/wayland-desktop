@@ -1,0 +1,199 @@
+// Waybar modules (sway) shared by every bar; the entry point is
+// config.jsonc, which includes this file once per output.
+// Icons are \u escapes so they survive any editor; see `man 5 waybar`.
+{
+    "layer": "top",
+    "position": "bottom",
+    "height": 44,
+    "spacing": 0,
+    "modules-left": [
+        "sway/workspaces",
+        "custom/app-term",
+        "custom/app-files",
+        "custom/app-browser",
+        "custom/app-code",
+        "custom/app-claude",
+        "custom/app-steam",
+        "sway/mode",
+        "sway/window"
+    ],
+    "modules-center": [
+        "clock"
+    ],
+    "modules-right": [
+        "tray",
+        "sway/language",
+        "group/audio",
+        "network",
+        "bluetooth",
+        "custom/perf",
+        "custom/brightness",
+        "battery"
+    ],
+    "sway/workspaces": {
+        "disable-scroll": true,
+        "all-outputs": false,
+        "format": "{name}"
+    },
+    "sway/mode": {
+        "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf047</span> {}"
+    },
+    "sway/window": {
+        "max-length": 60,
+        "separate-outputs": true,
+        "rewrite": {
+            "(.*) \u2014 Mozilla Firefox": "<span size='large' font_family='JetBrainsMono Nerd Font'>\udb80\ude39</span> $1",
+            "(.*) - Google Chrome": "<span size='large' font_family='JetBrainsMono Nerd Font'>\udb80\udea0</span> $1",
+            "(.*) - GNU Emacs.*": "<span size='large' font_family='JetBrainsMono Nerd Font'>\ue632</span> $1"
+        }
+    },
+    "clock": {
+        "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf073</span>  {:%a %d %b    %H:%M}",
+        "tooltip-format": "<tt><small>{calendar}</small></tt>",
+        "calendar": {
+            "mode": "month",
+            "weeks-pos": "right",
+            "format": {
+                "months": "<span color='#f5c2e7'><b>{}</b></span>",
+                "weekdays": "<span color='#fab387'><b>{}</b></span>",
+                "today": "<span color='#f38ba8'><b><u>{}</u></b></span>"
+            }
+        }
+    },
+    "sway/language": {
+        "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf11c</span>   {short}",
+        "tooltip-format": "{long}",
+        "on-click": "swaymsg input type:keyboard xkb_switch_layout next"
+    },
+    "pulseaudio": {
+        "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>{icon}</span>  {volume}%",
+        "format-muted": "<span size='large' font_family='JetBrainsMono Nerd Font'>\udb81\udf5f</span>  muted",
+        "format-bluetooth": "<span size='large' font_family='JetBrainsMono Nerd Font'>{icon}</span>  {volume}%",
+        "format-icons": {
+            "headphone": "\udb80\udecb",
+            "default": [
+                "\udb81\udd7f",
+                "\udb81\udd80",
+                "\udb81\udd7e"
+            ]
+        },
+        "scroll-step": 5,
+        "on-click": "pavucontrol",
+        "on-click-middle": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+        "tooltip-format": "{desc}\nmiddle-click: mute, scroll: volume"
+    },
+    "network": {
+        "format-wifi": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf1eb</span>   {essid}",
+        "format-ethernet": "<span size='large' font_family='JetBrainsMono Nerd Font'>\udb80\ude00</span>  {ipaddr}",
+        "format-disconnected": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf127</span>  off",
+        "tooltip-format": "{ifname}: {ipaddr}/{cidr} via {gwaddr}\n{essid} {signalStrength}%  \u2193{bandwidthDownBits} \u2191{bandwidthUpBits}",
+        "interval": 5,
+        "on-click": "nm-connection-editor",
+        "on-click-right": "nm-connection-editor"
+    },
+    "bluetooth": {
+        "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf293</span>",
+        "format-connected": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf293</span> {num_connections}",
+        "format-disabled": "",
+        "tooltip-format-connected": "{device_enumerate}",
+        "on-click": "blueman-manager"
+    },
+    // Per-monitor brightness. Each bar in the config points this at its own output
+    // (see scripts/brightness.sh): the laptop panel goes through /sys/class/backlight,
+    // external monitors over DDC/CI. On a monitor that answers neither, the module hides.
+    "custom/brightness": {
+        "exec": "~/.config/waybar/scripts/brightness.sh status focused",
+        "on-scroll-up": "~/.config/waybar/scripts/brightness.sh set focused 5%+",
+        "on-scroll-down": "~/.config/waybar/scripts/brightness.sh set focused 5%-",
+        "return-type": "json",
+        "interval": 5,
+        "signal": 8,
+        "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>{icon}</span>  {text}",
+        "format-icons": [
+            "\udb80\udcde",
+            "\udb80\udcdf",
+            "\udb80\udce0"
+        ],
+        "tooltip": true
+    },
+    "battery": {
+        "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>{icon}</span> {capacity}%",
+        "format-charging": "<span size='large' font_family='JetBrainsMono Nerd Font'>\udb80\udc84</span> {capacity}%",
+        "format-plugged": "<span size='large' font_family='JetBrainsMono Nerd Font'>\udb81\udea5</span> {capacity}%",
+        "format-icons": [
+            "\udb80\udc7a",
+            "\udb80\udc7b",
+            "\udb80\udc7c",
+            "\udb80\udc7d",
+            "\udb80\udc7e",
+            "\udb80\udc7f",
+            "\udb80\udc80",
+            "\udb80\udc81",
+            "\udb80\udc82",
+            "\udb80\udc79"
+        ],
+        "states": {
+            "warning": 25,
+            "critical": 10
+        },
+        "tooltip-format": "{timeTo}"
+    },
+    "tray": {
+        "icon-size": 16,
+        "spacing": 8
+    },
+    "group/audio": {
+        "orientation": "inherit",
+        "drawer": {
+            "transition-duration": 300,
+            "children-class": "drawer-child",
+            "transition-left-to-right": false
+        },
+        "modules": [
+            "pulseaudio",
+            "pulseaudio/slider"
+        ]
+    },
+    "pulseaudio/slider": {
+        "min": 0,
+        "max": 100,
+        "orientation": "horizontal"
+    },
+    "custom/app-term": {
+        "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf120</span>",
+        "tooltip-format": "Tabby",
+        "on-click": "tabby"
+    },
+    "custom/app-files": {
+        "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf07b</span>",
+        "tooltip-format": "Files (pcmanfm-qt)",
+        "on-click": "pcmanfm-qt"
+    },
+    "custom/app-browser": {
+        "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf269</span>",
+        "tooltip-format": "Firefox",
+        "on-click": "firefox"
+    },
+    "custom/app-code": {
+        "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>\ue70c</span>",
+        "tooltip-format": "VS Code Insiders",
+        "on-click": "code-insiders"
+    },
+    "custom/app-claude": {
+        "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>\udb81\udea9</span>",
+        "tooltip-format": "Claude",
+        "on-click": "claude-desktop"
+    },
+    "custom/app-steam": {
+        "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf1b6</span>",
+        "tooltip-format": "Steam",
+        "on-click": "steam"
+    },
+    "custom/perf": {
+        "exec": "~/.config/waybar/scripts/perf.sh",
+        "return-type": "json",
+        "interval": 3,
+        "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>\udb81\udcc5</span>{}",
+        "tooltip": true
+    }
+}

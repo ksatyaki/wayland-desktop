@@ -168,8 +168,9 @@ bindsym --locked XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@
 bindsym --locked XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
 bindsym --locked XF86AudioMicMute exec wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
 
-bindsym --locked XF86MonBrightnessUp exec brightnessctl set 10%+
-bindsym --locked XF86MonBrightnessDown exec brightnessctl set 10%-
+# brightness follows the focused output: the laptop panel over /sys/class/backlight, externals over DDC/CI
+bindsym --locked XF86MonBrightnessUp exec ~/.config/waybar/scripts/brightness.sh set focused 5%+
+bindsym --locked XF86MonBrightnessDown exec ~/.config/waybar/scripts/brightness.sh set focused 5%-
 
 bindsym --locked XF86AudioPlay exec playerctl play-pause
 bindsym --locked XF86AudioPause exec playerctl play-pause

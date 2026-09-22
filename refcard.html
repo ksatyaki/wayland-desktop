@@ -126,7 +126,7 @@ sudo dnf install sway swaylock swayidle swaybg xdg-desktop-portal-wlr
 # Hyprland (from the COPR)
 sudo dnf install hyprland hyprlock hypridle hyprpolkitagent hyprshot hyprshutdown hyprland-guiutils xdg-desktop-portal-hyprland
 # Shared desktop pieces
-sudo dnf install waybar fuzzel mako brightnessctl playerctl grim slurp wl-clipboard kanshi wdisplays waypaper awww \
+sudo dnf install waybar fuzzel mako brightnessctl ddcutil playerctl grim slurp wl-clipboard kanshi wdisplays waypaper awww \
                  pavucontrol nm-connection-editor blueman gnome-keyring xdg-desktop-portal-gtk
 # Apps and theming
 sudo dnf install pcmanfm-qt qt6ct qt5ct kvantum sddm sddm-themes
@@ -229,7 +229,7 @@ sudo dnf install pcmanfm-qt qt6ct qt5ct kvantum sddm sddm-themes
 
 <div class="group"><h3>Media (work while locked)</h3><dl>
 <dt>Volume ± 5 %, mute, mic mute</dt><dd>Fn volume keys</dd>
-<dt>Brightness</dt><dd>Fn brightness keys</dd>
+<dt>Brightness (focused monitor)</dt><dd>Fn brightness keys</dd>
 <dt>Play/pause, next, previous</dt><dd>Fn media keys</dd>
 </dl></div>
 
@@ -238,6 +238,7 @@ sudo dnf install pcmanfm-qt qt6ct qt5ct kvantum sddm sddm-themes
 <dt>Volume slider</dt><dd>hover speaker</dd>
 <dt>Metrics popup</dt><dd>hover gauge</dd>
 <dt>Network editor</dt><dd>click network</dd>
+<dt>Brightness of <i>that</i> monitor</dt><dd>scroll brightness</dd>
 <dt>Launchers</dt><dd>left of window title</dd>
 </dl></div>
 
@@ -276,7 +277,7 @@ sudo dnf install pcmanfm-qt qt6ct qt5ct kvantum sddm sddm-themes
 <p>Waybar, bottom, height 44, one instance per monitor, workspaces per monitor. Text Iosevka 18 px, icons JetBrainsMono Nerd Font pinned per icon.</p>
 <div class="tablewrap"><table>
 <tr><th>Left</th><th>Center</th><th>Right</th></tr>
-<tr><td>workspaces · launchers (Tabby, files, Firefox, VS Code Insiders, Claude, Steam) · mode · window title</td><td>date, time</td><td>tray · keyboard layout · volume (hover slider) · network (SSID or IP) · bluetooth · metrics gauge · brightness · battery</td></tr>
+<tr><td>workspaces · launchers (Tabby, files, Firefox, VS Code Insiders, Claude, Steam) · mode · window title</td><td>date, time</td><td>tray · keyboard layout · volume (hover slider) · network (SSID or IP) · bluetooth · metrics gauge · brightness (that monitor's own) · battery</td></tr>
 </table></div>
 <h3>Metrics popup</h3>
 <p>Hover the gauge: CPU temp, CPU usage, memory, rule, GPU temp, GPU usage, GPU memory. Source: <code>scripts/perf.sh</code>, refreshed every 3 s. Gauge turns red above 80 % CPU.</p>
@@ -349,7 +350,7 @@ sudo dnf install pcmanfm-qt qt6ct qt5ct kvantum sddm sddm-themes
 <li>Breeze Qt style paints menu bars and toolbars from <code>~/.config/kdeglobals</code> if it exists. Keep it deleted, or switch qt6ct to Fusion or Kvantum.</li>
 <li>Bluetooth headset stuck in mono means the hands-free profile; reconnect to renegotiate A2DP. Any app opening the mic switches it back to mono.</li>
 <li>Proportional fonts misalign Waybar modules; keep a monospace text font on the bar.</li>
-<li>Brightness keys need the user in the <code>video</code> group: <code>sudo usermod -aG video $USER</code>.</li>
+<li>Brightness keys need the user in the <code>video</code> group: <code>sudo usermod -aG video $USER</code>. External monitor brightness goes over DDC/CI: install <code>ddcutil</code>, then apply its udev rule to the buses already there with <code>sudo udevadm control --reload-rules &amp;&amp; sudo udevadm trigger -s i2c-dev -s dri</code>. Check with <code>ddcutil detect</code>; laptop panels never answer.</li>
 <li>Session env: SDDM starts Wayland sessions through a zsh login shell, so <code>~/.zprofile</code> reaches both compositors.</li>
 </ul>
 </section>
