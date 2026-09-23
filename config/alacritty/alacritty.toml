@@ -1,14 +1,19 @@
 [font]
-# 10.5pt at Alacritty's 96 DPI = 14px, the Fedora 8 terminal size.
-size = 10.5
+# Alacritty converts points at 96 DPI: 11pt = ~14.7px.
+# The Fedora 8 terminal measured 14px, which is 10.5pt.
+size = 11
 
 [font.normal]
 family = "DejaVu Sans Mono"
 style = "Book"
 
+# Bold is shown with the bright colour variants instead of the bold face,
+# so these deliberately point at the regular and oblique faces. Setting
+# draw_bold_text_with_bright_colors alone is not enough: Alacritty would
+# still rasterize bold text with DejaVu's Bold face on top of the colour.
 [font.bold]
 family = "DejaVu Sans Mono"
-style = "Bold"
+style = "Book"
 
 [font.italic]
 family = "DejaVu Sans Mono"
@@ -16,4 +21,12 @@ style = "Oblique"
 
 [font.bold_italic]
 family = "DejaVu Sans Mono"
-style = "Bold Oblique"
+style = "Oblique"
+
+[colors]
+draw_bold_text_with_bright_colors = true
+
+# Bold text that carries no colour of its own falls back to the normal
+# foreground. Uncomment to give it a distinct one instead.
+# [colors.primary]
+# bright_foreground = "#ffffff"
