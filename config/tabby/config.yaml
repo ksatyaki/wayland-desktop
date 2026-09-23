@@ -1,27 +1,14 @@
 version: 8
 
-# Minimal Tabby config. Managed in ~/wayland-desktop/config/tabby/config.yaml.
-
-profiles: []
-groups: []
+# Minimal Tabby config: only what differs from Tabby's own defaults.
+# Everything else is left unset so Tabby upgrades can move its defaults.
 
 terminal:
   font: DejaVu Sans Mono
   fontSize: 14
-  fontWeightBold: 600
-  linePadding: 2
-  cursor: beam
-  frontend: xterm
-  ligatures: false
-  pasteOnMiddleClick: true
-  altIsMeta: true
 
-  # xterm.js silently rewrites colours to hit a contrast ratio, which is what
-  # stops the foreground from being a true white or black. 1 disables it, so
-  # the palettes below are used exactly as written.
-  minimumContrastRatio: 1
-  paletteGenerate: false
-
+  # Tabby's stock scheme uses a grey foreground (#cacaca). These use a true
+  # white on dark and a true black on light.
   colorScheme:
     name: Plain Dark
     foreground: '#ffffff'
@@ -73,15 +60,8 @@ terminal:
       - '#000000'
 
 appearance:
-  # Must stay fully opaque: subpixel antialiasing cannot work on a translucent
-  # surface, because per-channel coverage is computed against the background.
+  # Tabby already defaults to opaque; pinned because a translucent window makes
+  # subpixel antialiasing impossible (per-channel coverage needs a known opaque
+  # background), and that failure is invisible until measured.
   opacity: 1.0
   vibrancy: false
-
-clickableLinks:
-  modifier: ctrlKey
-
-enableWelcomeTab: false
-
-# Empty: use Tabby's default keybindings.
-hotkeys: {}
