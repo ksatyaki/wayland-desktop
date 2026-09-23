@@ -29,7 +29,8 @@ style = "Oblique"
 style = { shape = "Beam", blinking = "On" }
 
 # ---------------------------------------------------------------- DARK (active)
-# Amber on black: 11.46:1. Bold uses the bright palette, which matters because
+# Gold on black: 14.97:1. Lighter alternatives: #ffe066 (16.11:1),
+# #ffff55 (19.69:1, the palette's own bright yellow); darker: #ffcc00, #ffb000. Bold uses the bright palette, which matters because
 # ls paints directories 01;34 and normal blue on black is only 1.58:1; as bright
 # blue it is 4.13:1.
 [colors]
@@ -37,11 +38,11 @@ draw_bold_text_with_bright_colors = true
 
 [colors.primary]
 background = "#000000"
-foreground = "#ffb000"
+foreground = "#ffd700"
 
 [colors.cursor]
 text   = "#000000"
-cursor = "#ffb000"
+cursor = "#ffd700"
 
 [colors.normal]
 black   = "#000000"
