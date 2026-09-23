@@ -56,6 +56,11 @@ hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
 hl.env("GDK_BACKEND", "wayland,x11,*")
 hl.env("QT_QPA_PLATFORM", "wayland;xcb")
 hl.env("QT_QPA_PLATFORMTHEME", "qt6ct") -- Qt style/icons/fonts from ~/.config/qt6ct (also in ~/.zprofile for Sway)
+-- FreeType: v35 TrueType interpreter (full horizontal stem snapping, the pre-2016 look) plus CFF
+-- stem darkening. Pairs with ~/.config/fontconfig/fonts.conf (subpixel RGB, hintfull, no autohint).
+-- Must live here: Hyprland runs in the session scope, not a systemd user unit, so ~/.config/
+-- environment.d is never read. Also in ~/.zprofile for Sway.
+hl.env("FREETYPE_PROPERTIES", "truetype:interpreter-version=35 cff:no-stem-darkening=0")
 
 ------------------------------------------------------------------ look & feel
 hl.config({

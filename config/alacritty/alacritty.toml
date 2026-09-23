@@ -1,0 +1,19 @@
+[font]
+# 10.5pt at Alacritty's 96 DPI = 14px, the Fedora 8 terminal size.
+size = 10.5
+
+[font.normal]
+family = "DejaVu Sans Mono"
+style = "Book"
+
+[font.bold]
+family = "DejaVu Sans Mono"
+style = "Bold"
+
+[font.italic]
+family = "DejaVu Sans Mono"
+style = "Oblique"
+
+[font.bold_italic]
+family = "DejaVu Sans Mono"
+style = "Bold Oblique"

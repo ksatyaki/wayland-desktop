@@ -194,11 +194,11 @@ fi
 
 if [ $THEMING = 1 ]; then
     echo "App theming (Qt/GTK):"
-    for d in qt6ct qt5ct gtk-3.0 gtk-4.0 mimeapps.list; do put_config "$d"; done
+    for d in qt6ct qt5ct gtk-3.0 gtk-4.0 fontconfig alacritty mimeapps.list; do put_config "$d"; done
     if [ -e "$HOME/.zprofile" ] && ! cmp -s "$REPO/home/.zprofile" "$HOME/.zprofile"; then
         cp "$HOME/.zprofile" "$HOME/.zprofile.bak-$STAMP"; echo "  backup: ~/.zprofile.bak-$STAMP"
     fi
-    cp "$REPO/home/.zprofile" "$HOME/.zprofile"; echo "  ~/.zprofile (exports QT_QPA_PLATFORMTHEME=qt6ct)"
+    cp "$REPO/home/.zprofile" "$HOME/.zprofile"; echo "  ~/.zprofile (exports QT_QPA_PLATFORMTHEME=qt6ct, FREETYPE_PROPERTIES)"
     xdg-mime default pcmanfm-qt.desktop inode/directory 2>/dev/null || true
 fi
 
