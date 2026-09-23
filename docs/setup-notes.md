@@ -87,9 +87,13 @@ the login and lock screens in [login-and-lock-screen.md](login-and-lock-screen.m
   Launcher colours are per-module rules in the same CSS block: Firefox `#ff7139`, VS Code Insiders `#24bfa5`, Claude `#d97757`, Steam `#66c0f4`;
   terminal and folder use `@subtext` and turn `@text` on hover. A new launcher without its own rule inherits the grey.
 - Brightness is per monitor. Waybar cannot vary a module between the copies of one bar, so `config*.jsonc` is a list of bars,
-  one per output (`eDP-1`, `DP-1`..`DP-3`, `HDMI-A-1`, `HDMI-A-2`, plus a catch-all for anything else), each `include`-ing
-  `modules-*.jsonc` and overriding only the brightness module's `exec` and scroll commands with its own output name.
-  A connector that is not plugged in simply gets no bar, so hotplug needs no reload.
+  one per output, each `include`-ing `modules-*.jsonc` and overriding only the brightness module's `exec` and scroll commands
+  with its own output name. A connector that is not plugged in is skipped, so hotplug needs no reload — but an output with no
+  entry gets **no bar at all**, so the list has to name every connector the GPU exposes, not just the ones in use:
+  `ls -d /sys/class/drm/card*-* | sed 's|.*/card[0-9]*-||'` (here `eDP-1`, `DP-1`..`DP-4`, `HDMI-A-1`).
+- There is no catch-all entry, because waybar cannot express one: an `"output"` **array** is read as a whitelist, so
+  `["!DP-1", "!DP-2", ...]` matches nothing at all and those monitors silently lose their bar. Negation works only as a bare
+  string (`"output": "!DP-1"`), which holds a single name. Verified on waybar 0.15.
 - `scripts/brightness.sh status|set <output>` picks the backend per monitor and caches it in `$XDG_RUNTIME_DIR/brightness`:
   a panel under `/sys/class/backlight` (`brightnessctl`), otherwise the i2c bus that `ddcutil detect` reports for that DRM
   connector — matched on `DRM_connector` first, on the EDID serial otherwise. A monitor that answers neither prints nothing,

@@ -1,7 +1,10 @@
-// Waybar bars (Hyprland): one per output, so the brightness module on each monitor's bar
-//  shows and scrolls that monitor's own brightness. Everything else lives in modules-hyprland.jsonc,
-//  included once per bar; an output waybar sees but that is not listed here still gets a
-//  bar (the last entry), just without the brightness module.
+// Waybar bars (Hyprland): one per output, so the brightness module on each monitor's bar shows and
+//  scrolls that monitor's own brightness. Everything else lives in modules-hyprland.jsonc, included once per bar.
+//  An output with no entry here gets NO BAR, so this list must name every connector the GPU exposes:
+//    ls -d /sys/class/drm/card*-* | sed 's|.*/card[0-9]*-||'
+//  A catch-all is not possible: waybar reads an "output" ARRAY as a whitelist, so ["!DP-1", ...] matches
+//  nothing at all; negation only works as a bare string ("output": "!DP-1"), which holds just one name.
+//  Connectors that are not plugged in are simply skipped, so hotplug needs no reload.
 [
     {
         "output": "eDP-1",
@@ -40,6 +43,15 @@
         }
     },
     {
+        "output": "DP-4",
+        "include": ["~/.config/waybar/modules-hyprland.jsonc"],
+        "custom/brightness": {
+            "exec": "~/.config/waybar/scripts/brightness.sh status DP-4",
+            "on-scroll-up": "~/.config/waybar/scripts/brightness.sh set DP-4 5%+",
+            "on-scroll-down": "~/.config/waybar/scripts/brightness.sh set DP-4 5%-"
+        }
+    },
+    {
         "output": "HDMI-A-1",
         "include": ["~/.config/waybar/modules-hyprland.jsonc"],
         "custom/brightness": {
@@ -47,19 +59,5 @@
             "on-scroll-up": "~/.config/waybar/scripts/brightness.sh set HDMI-A-1 5%+",
             "on-scroll-down": "~/.config/waybar/scripts/brightness.sh set HDMI-A-1 5%-"
         }
-    },
-    {
-        "output": "HDMI-A-2",
-        "include": ["~/.config/waybar/modules-hyprland.jsonc"],
-        "custom/brightness": {
-            "exec": "~/.config/waybar/scripts/brightness.sh status HDMI-A-2",
-            "on-scroll-up": "~/.config/waybar/scripts/brightness.sh set HDMI-A-2 5%+",
-            "on-scroll-down": "~/.config/waybar/scripts/brightness.sh set HDMI-A-2 5%-"
-        }
-    },
-    {
-        "output": ["!eDP-1", "!DP-1", "!DP-2", "!DP-3", "!HDMI-A-1", "!HDMI-A-2"],
-        "include": ["~/.config/waybar/modules-hyprland.jsonc"],
-        "modules-right": ["tray", "hyprland/language", "group/audio", "network", "bluetooth", "custom/perf", "battery"]
     }
 ]
