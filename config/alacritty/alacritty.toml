@@ -1,7 +1,7 @@
-# Colours are mate-terminal's default profile, read from
-# /org/mate/terminal/profiles/default/ : the VGA/Linux-console palette on a
-# cream background. Dark-on-light is also the polarity the Fedora 8 hinting
-# was tuned for (see ~/.config/fontconfig/fonts.conf and hyprland.lua).
+# Classic VGA/Linux-console palette, taken from mate-terminal's default profile
+# (/org/mate/terminal/profiles/default/). Dark amber variant is active; the
+# light cream variant is at the bottom, commented out. Swap by commenting one
+# block and uncommenting the other.
 
 [font]
 # Alacritty converts points at 96 DPI: 11pt = ~14.7px.
@@ -11,10 +11,8 @@ size = 11
 family = "DejaVu Sans Mono"
 style = "Book"
 
-# mate-terminal sets allow-bold = false, so bold uses the regular face and the
-# normal colour. draw_bold_text_with_bright_colors is deliberately NOT set:
-# against this cream background the bright palette is unreadable (bright yellow
-# measures 1.05:1, bright white 1.02:1).
+# Bold shows through the bright colours rather than DejaVu's Bold face, so the
+# bold slots deliberately point at the regular and oblique faces.
 [font.bold]
 family = "DejaVu Sans Mono"
 style = "Book"
@@ -30,13 +28,20 @@ style = "Oblique"
 [cursor]
 style = { shape = "Beam", blinking = "On" }
 
+# ---------------------------------------------------------------- DARK (active)
+# Amber on black: 11.46:1. Bold uses the bright palette, which matters because
+# ls paints directories 01;34 and normal blue on black is only 1.58:1; as bright
+# blue it is 4.13:1.
+[colors]
+draw_bold_text_with_bright_colors = true
+
 [colors.primary]
-background = "#ffffdd"
-foreground = "#000000"
+background = "#000000"
+foreground = "#ffb000"
 
 [colors.cursor]
-text   = "#ffffdd"
-cursor = "#000000"
+text   = "#000000"
+cursor = "#ffb000"
 
 [colors.normal]
 black   = "#000000"
@@ -57,3 +62,16 @@ blue    = "#5555ff"
 magenta = "#ff55ff"
 cyan    = "#55ffff"
 white   = "#ffffff"
+
+# --------------------------------------------------------------- LIGHT (unused)
+# mate-terminal's actual defaults: cream background, black text. If you enable
+# this, also set draw_bold_text_with_bright_colors = false above: against cream
+# the bright palette is unreadable (bright yellow 1.05:1, bright white 1.02:1).
+#
+# [colors.primary]
+# background = "#ffffdd"
+# foreground = "#000000"
+#
+# [colors.cursor]
+# text   = "#ffffdd"
+# cursor = "#000000"

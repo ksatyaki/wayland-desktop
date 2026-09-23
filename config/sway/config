@@ -57,6 +57,7 @@ floating_modifier $mod normal
 ### Launching ###########################################################
 
 bindsym $mod+Return exec $term
+bindsym Ctrl+Return exec alacritty
 bindsym Mod1+Mod4+e exec emacs --init-directory ~/.config/emacs
 bindsym $mod+d exec $menu
 bindsym $mod+Shift+d exec $menu

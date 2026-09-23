@@ -162,8 +162,8 @@
     },
     "custom/app-term": {
         "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf120</span>",
-        "tooltip-format": "Tabby",
-        "on-click": "tabby"
+        "tooltip-format": "Alacritty",
+        "on-click": "alacritty"
     },
     "custom/app-files": {
         "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf07b</span>",

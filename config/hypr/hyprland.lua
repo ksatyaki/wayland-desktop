@@ -184,6 +184,7 @@ hl.gesture({ fingers = 3, direction = "horizontal", action = "workspace" })
 
 ------------------------------------------------------------------ launching
 hl.bind(mod .. " + Return",    hl.dsp.exec_cmd(terminal))
+hl.bind("CTRL + Return",       hl.dsp.exec_cmd("alacritty"))  -- second terminal
 hl.bind("ALT + SUPER + E",     hl.dsp.exec_cmd("emacs --init-directory ~/.config/emacs"))
 hl.bind(mod .. " + D",         hl.dsp.exec_cmd(menu))
 hl.bind(mod .. " + SHIFT + D", hl.dsp.exec_cmd(menu))
