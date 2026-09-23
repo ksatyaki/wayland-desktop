@@ -1,0 +1,87 @@
+version: 8
+
+# Minimal Tabby config. Managed in ~/wayland-desktop/config/tabby/config.yaml.
+
+profiles: []
+groups: []
+
+terminal:
+  font: DejaVu Sans Mono
+  fontSize: 14
+  fontWeightBold: 600
+  linePadding: 2
+  cursor: beam
+  frontend: xterm
+  ligatures: false
+  pasteOnMiddleClick: true
+  altIsMeta: true
+
+  # xterm.js silently rewrites colours to hit a contrast ratio, which is what
+  # stops the foreground from being a true white or black. 1 disables it, so
+  # the palettes below are used exactly as written.
+  minimumContrastRatio: 1
+  paletteGenerate: false
+
+  colorScheme:
+    name: Plain Dark
+    foreground: '#ffffff'
+    background: '#121212'
+    cursor: '#ffffff'
+    cursorAccent: '#121212'
+    selection: '#3a5e8c'
+    colors:
+      - '#121212'
+      - '#e06c6c'
+      - '#6cc46c'
+      - '#d8b45a'
+      - '#6ba8f5'
+      - '#c58ae0'
+      - '#5cc8c8'
+      - '#c8c8c8'
+      - '#6a6a6a'
+      - '#ff8c8c'
+      - '#8ce08c'
+      - '#f0d070'
+      - '#92c2ff'
+      - '#dcaaf0'
+      - '#7ee0e0'
+      - '#ffffff'
+
+  lightColorScheme:
+    name: Plain Light
+    foreground: '#000000'
+    background: '#ffffff'
+    cursor: '#000000'
+    cursorAccent: '#ffffff'
+    selection: '#b8d4f0'
+    colors:
+      - '#000000'
+      - '#b02020'
+      - '#1f7a2e'
+      - '#8a6000'
+      - '#1a4fbf'
+      - '#8a2fa8'
+      - '#0f6f80'
+      - '#5c5c5c'
+      - '#8a8a8a'
+      - '#d03030'
+      - '#2a9440'
+      - '#a87400'
+      - '#2a66d8'
+      - '#a63fc4'
+      - '#158798'
+      - '#000000'
+
+appearance:
+  # Must stay fully opaque: subpixel antialiasing cannot work on a translucent
+  # surface, because per-channel coverage is computed against the background.
+  opacity: 1.0
+  vibrancy: false
+
+clickableLinks:
+  modifier: ctrlKey
+
+enableWelcomeTab: false
+
+# Empty: use Tabby's default keybindings.
+hotkeys: {}

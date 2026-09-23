@@ -199,6 +199,13 @@ if [ $THEMING = 1 ]; then
         cp "$HOME/.zprofile" "$HOME/.zprofile.bak-$STAMP"; echo "  backup: ~/.zprofile.bak-$STAMP"
     fi
     cp "$REPO/home/.zprofile" "$HOME/.zprofile"; echo "  ~/.zprofile (exports QT_QPA_PLATFORMTHEME=qt6ct, FREETYPE_PROPERTIES)"
+    # Tabby: copy only config.yaml. The rest of ~/.config/tabby is Electron state
+    # (caches, cookies, blob storage), so put_config would move it aside every run.
+    if [ -e "$HOME/.config/tabby/config.yaml" ] && ! cmp -s "$REPO/config/tabby/config.yaml" "$HOME/.config/tabby/config.yaml"; then
+        cp "$HOME/.config/tabby/config.yaml" "$HOME/.config/tabby/config.yaml.bak-$STAMP"; echo "  backup: ~/.config/tabby/config.yaml.bak-$STAMP"
+    fi
+    mkdir -p "$HOME/.config/tabby"
+    cp "$REPO/config/tabby/config.yaml" "$HOME/.config/tabby/config.yaml"; echo "  ~/.config/tabby/config.yaml"
     xdg-mime default pcmanfm-qt.desktop inode/directory 2>/dev/null || true
 fi
 
