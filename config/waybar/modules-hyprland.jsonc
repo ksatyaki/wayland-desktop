@@ -24,6 +24,7 @@
         "tray",
         "hyprland/language",
         "group/audio",
+        "custom/bt-battery",
         "network",
         "bluetooth",
         "custom/perf",
@@ -59,6 +60,29 @@
         "on-click": "pavucontrol",
         "on-click-middle": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
         "tooltip-format": "{desc}\nmiddle-click: mute, scroll: volume"
+    },
+    // Battery of the connected Bluetooth headset, sitting next to the volume so the
+    // two read as one audio item. Blank (and so hidden) when no connected device
+    // publishes a level; scripts/bt-battery.sh says what BlueZ needs to publish one.
+    "custom/bt-battery": {
+        "exec": "~/.config/waybar/scripts/bt-battery.sh",
+        "return-type": "json",
+        "interval": 60,
+        "signal": 9,
+        "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>{icon}</span> {}",
+        "format-icons": [
+            "\udb80\udc7a",
+            "\udb80\udc7b",
+            "\udb80\udc7c",
+            "\udb80\udc7d",
+            "\udb80\udc7e",
+            "\udb80\udc7f",
+            "\udb80\udc80",
+            "\udb80\udc81",
+            "\udb80\udc82",
+            "\udb80\udc79"
+        ],
+        "tooltip": true
     },
     "network": {
         "format-wifi": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf1eb</span>   {essid}",

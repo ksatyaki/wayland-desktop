@@ -110,7 +110,7 @@ window#waybar.empty #window {
 
 /* right-side modules: subtle separators, one accent colour each */
 #tray, #language, #pulseaudio, #network, #bluetooth, #custom-perf,
-#cpu, #memory, #custom-gpu, #temperature, #backlight, #battery {
+#cpu, #memory, #custom-gpu, #temperature, #backlight, #custom-brightness, #battery {
     padding: 0 10px;
     margin: 4px 0;
     border-left: 1px solid @surface0;
@@ -120,6 +120,14 @@ window#waybar.empty #window {
 #language    { color: @mauve; }
 #pulseaudio  { color: @pink; }
 #pulseaudio.muted { color: @overlay; }
+/* headset battery: part of the volume item, so the volume's colour and no separator */
+#custom-bt-battery {
+    color: @pink;
+    padding: 0 10px 0 0;
+    margin: 4px 0;
+}
+#custom-bt-battery.warning  { color: @yellow; }
+#custom-bt-battery.critical { color: @red; }
 #network     { color: @sapphire; }
 #network.disconnected { color: @overlay; }
 #bluetooth   { color: @blue; }
@@ -132,6 +140,7 @@ window#waybar.empty #window {
 #temperature { color: @yellow; }
 #temperature.critical { color: @red; }
 #backlight   { color: @peach; }
+#custom-brightness { color: @peach; }
 #battery     { color: @green; }
 #battery.charging, #battery.plugged { color: @teal; }
 #battery.warning:not(.charging)  { color: @yellow; }

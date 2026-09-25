@@ -156,6 +156,26 @@ install_wallpaper() {
 # The bar controls each monitor's own brightness: the laptop panel through /sys/class/backlight,
 # external monitors over DDC/CI, which needs read/write on the /dev/i2c-* buses. ddcutil ships the
 # udev rule for that; it only applies to device nodes created after the package landed, so re-trigger it.
+enable_bt_battery() {
+    conf=/etc/bluetooth/main.conf
+    [ -e "$conf" ] || { echo "  headset battery: no $conf, skipped"; return 0; }
+    # A Bluetooth headset reports its battery over HFP, and BlueZ only turns that into
+    # org.bluez.Battery1 -- what the bar's custom/bt-battery module reads -- once the
+    # experimental battery-provider API is on; PipeWire registers as the provider.
+    if sudo grep -qE '^[[:space:]]*Experimental[[:space:]]*=[[:space:]]*true' "$conf"; then
+        echo "  headset battery: BlueZ Experimental already on"
+        return 0
+    fi
+    sudo cp "$conf" "$conf.bak-$STAMP"
+    if sudo grep -qE '^[[:space:]]*#?[[:space:]]*Experimental[[:space:]]*=' "$conf"; then
+        sudo sed -i 's/^[[:space:]]*#\?[[:space:]]*Experimental[[:space:]]*=.*/Experimental = true/' "$conf"
+    else
+        sudo sed -i '/^\[General\]/a Experimental = true' "$conf"
+    fi
+    sudo systemctl restart bluetooth.service
+    echo "  headset battery: BlueZ Experimental = true (backup: $conf.bak-$STAMP) -- reconnect the headset"
+}
+
 enable_ddc() {
     command -v ddcutil >/dev/null 2>&1 || { echo "  external monitor brightness: install ddcutil to enable it"; return 0; }
     sudo modprobe i2c-dev 2>/dev/null || true
@@ -187,8 +207,9 @@ if [ $BAR = 1 ]; then
     echo "Bar, launcher, notifications, wallpaper:"
     for d in waybar mako fuzzel waypaper; do put_config "$d"; done
     chmod +x "$HOME/.config/waybar/scripts/perf.sh" "$HOME/.config/waybar/scripts/gpu.sh" \
-             "$HOME/.config/waybar/scripts/brightness.sh"
+             "$HOME/.config/waybar/scripts/brightness.sh" "$HOME/.config/waybar/scripts/bt-battery.sh"
     enable_ddc
+    enable_bt_battery
     install_wallpaper
 fi
 
