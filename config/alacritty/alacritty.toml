@@ -5,7 +5,7 @@
 
 [font]
 # Alacritty converts points at 96 DPI: 11pt = ~14.7px.
-size = 11
+size = 10.5
 
 [font.normal]
 family = "DejaVu Sans Mono"
@@ -25,6 +25,9 @@ style = "Oblique"
 family = "DejaVu Sans Mono"
 style = "Oblique"
 
+[window]
+opacity = 0.6
+
 [cursor]
 style = { shape = "Beam", blinking = "On" }
 
@@ -38,7 +41,7 @@ draw_bold_text_with_bright_colors = true
 
 [colors.primary]
 background = "#000000"
-foreground = "#ffd700"
+foreground = "#ffffcc"
 
 [colors.cursor]
 text   = "#000000"
