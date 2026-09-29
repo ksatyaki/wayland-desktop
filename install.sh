@@ -234,6 +234,8 @@ if [ $HYPR = 1 ]; then
     install_fonts
     echo "Hyprland:"
     put_config hypr
+    put_config systemd   # hyprland-session.target: lets xdg-desktop-portal (screen sharing) start
+    systemctl --user daemon-reload 2>/dev/null || true
     install_wallpaper
 fi
 

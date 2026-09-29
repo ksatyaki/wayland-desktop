@@ -311,6 +311,10 @@ hl.window_rule({
 
 ------------------------------------------------------------------ autostart
 hl.on("hyprland.start", function()
+    -- tell systemd --user the graphical session is up: xdg-desktop-portal (screen sharing, file dialogs)
+    -- depends on graphical-session.target and never starts otherwise
+    hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE XDG_SESSION_TYPE && "
+             .. "dbus-update-activation-environment --systemd WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE && systemctl --user start hyprland-session.target")
     hl.exec_cmd("waybar -c ~/.config/waybar/config-hyprland.jsonc")
     hl.exec_cmd("awww-daemon")          -- wallpaper daemon (backend used by waypaper)
     hl.exec_cmd("sleep 1 && waypaper --restore")  -- reapply the wallpaper picked in waypaper

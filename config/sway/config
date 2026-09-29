@@ -6,7 +6,8 @@ set $term tabby
 set $menu fuzzel
 set $lock swaylock -f   # look: ~/.config/swaylock/config
 
-font pango:Eternal UI Bold 11    # DOOM Eternal font; Bold is caps-only, suits title bars
+# DOOM Eternal font; Bold is caps-only, suits title bars (sway takes no trailing comment on a font line)
+font pango:Eternal UI Bold 11
 
 ### Look ################################################################
 
@@ -191,6 +192,8 @@ exec awww-daemon
 exec sleep 1 && waypaper --restore
 exec kanshi   # per-site monitor profiles, incl. disabling eDP-1 at the office
 # polkit agent (password prompts for privileged actions); also used by Hyprland
+# tell systemd --user the graphical session is up: xdg-desktop-portal (screen sharing) depends on graphical-session.target
+exec systemctl --user import-environment WAYLAND_DISPLAY DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP XDG_SESSION_TYPE && dbus-update-activation-environment --systemd WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE && systemctl --user start sway-session.target
 exec systemctl --user start hyprpolkitagent
 exec swayidle -w \
     timeout 600 '$lock' \
