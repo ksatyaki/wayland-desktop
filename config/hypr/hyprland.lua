@@ -12,7 +12,7 @@ local brightness = os.getenv("HOME") .. "/.config/waybar/scripts/brightness.sh"
 -- so other monitors on the same ports fall through to the "auto" rule at the end.
 -- externals are matched by description (hyprctl monitors), so both sites can be listed; only the present ones apply
 -- home: laptop panel left (bottom-aligned), Lenovo, HP
-hl.monitor({ output = "desc:Lenovo Group Limited G27q-20 U63330HD", mode = "preferred", position = "2048x0",   scale = 1 })  -- Lenovo 2560x1440
+hl.monitor({ output = "desc:Lenovo Group Limited G27q-20 U63330HD", mode = "2560x1440@120", position = "2048x0",   scale = 1 })  -- Lenovo 2560x1440, 120 Hz (its EDID-preferred mode is only 60 Hz)
 hl.monitor({ output = "desc:HP Inc. HP E24u G5 CN43172GTD",        mode = "preferred", position = "4608x360", scale = 1 })  -- HP 1920x1080
 -- office: Dell, AOC, Dell (bottom-aligned), laptop panel off
 hl.monitor({ output = "desc:Dell Inc. DELL U2422H 3119RP3",         mode = "preferred", position = "0x360",    scale = 1 })  -- Dell 1920x1080 (left)
@@ -295,9 +295,9 @@ hl.workspace_rule({ workspace = "1", monitor = "desc:Lenovo Group Limited G27q-2
 hl.workspace_rule({ workspace = "2", monitor = "desc:HP Inc. HP E24u G5 CN43172GTD" })
 -- Windows programs (Proton/Steam games: class steam_app_<id>; Wine: <name>.exe) always open on workspace 1 (the Lenovo)
 hl.window_rule({ name = "windows-apps-ws1", match = { class = "^(steam_app_\\d+|.*\\.[Ee][Xx][Ee])$" }, workspace = "1" })
--- DOOM Eternal (782330) runs as a borderless XWayland window; Hyprland would otherwise tile it (suppress-maximize below),
+-- DOOM Eternal (782330) and DOOM: The Dark Ages (3017860) run as a borderless XWayland window; Hyprland would otherwise tile it (suppress-maximize below),
 -- leaving the game rendering at 2560x1396. Force it fullscreen on open so it gets the whole 2560x1440 monitor.
-hl.window_rule({ name = "doom-eternal-fullscreen", match = { class = "^(steam_app_782330)$" }, fullscreen = true })
+hl.window_rule({ name = "doom-eternal-fullscreen", match = { class = "^(steam_app_(782330|3017860))$" }, fullscreen = true })
 
 hl.window_rule({ name = "pavucontrol-float", match = { class = "^(org\\.pulseaudio\\.pavucontrol|pavucontrol)$" }, float = true, size = {900, 600}, center = true })
 
