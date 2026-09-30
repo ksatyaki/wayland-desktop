@@ -37,8 +37,13 @@ if laptop_panel_docked then
 else
     hl.monitor({ output = "eDP-1", mode = "preferred", position = "0x160", scale = 1.25 }) -- 2560x1600 -> 2048x1280 logical
 end
+-- XWayland marks no output as RandR "primary", so Wine/Proton games enumerate the first X output (here the HP 1080p)
+-- and offer only its modes. Make the monitor that hosts workspace 1 (where games open, see windows-apps-ws1) the primary.
+local set_x11_primary = "sleep 2; m=$(hyprctl -j workspaces | jq -r '.[] | select(.id==1) | .monitor'); "
+                     .. "[ -n \"$m\" ] && xrandr --output \"$m\" --primary"
 local function on_monitor_change()
     if docked() ~= laptop_panel_docked then hl.exec_cmd("hyprctl reload") end
+    hl.exec_cmd(set_x11_primary)
 end
 hl.on("monitor.added",   on_monitor_change)
 hl.on("monitor.removed", on_monitor_change)
@@ -315,6 +320,7 @@ hl.on("hyprland.start", function()
     -- depends on graphical-session.target and never starts otherwise
     hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE XDG_SESSION_TYPE && "
              .. "dbus-update-activation-environment --systemd WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE && systemctl --user start hyprland-session.target")
+    hl.exec_cmd(set_x11_primary)
     hl.exec_cmd("waybar -c ~/.config/waybar/config-hyprland.jsonc")
     hl.exec_cmd("awww-daemon")          -- wallpaper daemon (backend used by waypaper)
     hl.exec_cmd("sleep 1 && waypaper --restore")  -- reapply the wallpaper picked in waypaper
