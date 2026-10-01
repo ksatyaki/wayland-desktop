@@ -16,7 +16,7 @@ hl.monitor({ output = "desc:Lenovo Group Limited G27q-20 U63330HD", mode = "2560
 hl.monitor({ output = "desc:HP Inc. HP E24u G5 CN43172GTD",        mode = "preferred", position = "4608x360", scale = 1 })  -- HP 1920x1080
 -- office: Dell, AOC, Dell (bottom-aligned), laptop panel off
 hl.monitor({ output = "desc:Dell Inc. DELL U2422H 3119RP3",         mode = "preferred", position = "0x360",    scale = 1 })  -- Dell 1920x1080 (left)
-hl.monitor({ output = "desc:AOC Q27G42XE 1O0R4HA008572",            mode = "preferred", position = "1920x0",   scale = 1 })  -- AOC 2560x1440
+hl.monitor({ output = "desc:AOC Q27G42XE 1O0R4HA008572",            mode = "2560x1440@144", position = "1920x0",   scale = 1 })  -- AOC 2560x1440, 144 Hz (EDID-preferred mode is 60 Hz)
 hl.monitor({ output = "desc:Dell Inc. DELL U2422H 85LJRP3",         mode = "preferred", position = "4480x360", scale = 1 })  -- Dell 1920x1080 (right)
 
 -- laptop panel (eDP-1): on at home and on the road, off whenever an office monitor is connected
