@@ -45,7 +45,7 @@ Binary files (fonts, wallpaper, theme assets) are stored with Git LFS; install `
 
 ### Hyprland
 
-Hyprland config in the Lua format of Hyprland >= 0.56: i3-style keybindings, monitor layouts matched by make/model/serial with the laptop panel switched off when docked, NVIDIA and Electron environment, window rules, Super+W tabbed groups, and the DOOM lock screen ([hyprlock](docs/login-and-lock-screen.md)) with hypridle locking after 10 minutes. Includes the fonts and wallpaper the lock screen uses. Combine with `--enable-bar` for the bar, launcher and notifications the config starts.
+Hyprland config in the Lua format of Hyprland >= 0.56: i3-style keybindings, monitor layouts matched by make/model/serial with the laptop panel switched off when docked, Super+P to switch between the site layout and a single external monitor at its best mode, NVIDIA and Electron environment, window rules, Super+W tabbed groups, and the DOOM lock screen ([hyprlock](docs/login-and-lock-screen.md)) with hypridle locking after 10 minutes. Includes the fonts and wallpaper the lock screen uses. Combine with `--enable-bar` for the bar, launcher and notifications the config starts.
 
 ```sh
 ./install.sh --enable-hyprland --packages

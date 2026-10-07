@@ -8,16 +8,42 @@ local lock     = "pidof hyprlock || hyprlock"
 local brightness = os.getenv("HOME") .. "/.config/waybar/scripts/brightness.sh"
 
 ------------------------------------------------------------------ monitors
--- Home layout, left to right, bottom-aligned. Externals are matched by make/model/serial ("desc:" from hyprctl monitors),
--- so other monitors on the same ports fall through to the "auto" rule at the end.
--- externals are matched by description (hyprctl monitors), so both sites can be listed; only the present ones apply
--- home: laptop panel left (bottom-aligned), Lenovo, HP
-hl.monitor({ output = "desc:Lenovo Group Limited G27q-20 U63330HD", mode = "2560x1440@120", position = "2048x0",   scale = 1 })  -- Lenovo 2560x1440, 120 Hz (its EDID-preferred mode is only 60 Hz)
-hl.monitor({ output = "desc:HP Inc. HP E24u G5 CN43172GTD",        mode = "preferred", position = "4608x360", scale = 1 })  -- HP 1920x1080
--- office: Dell, AOC, Dell (bottom-aligned), laptop panel off
-hl.monitor({ output = "desc:Dell Inc. DELL U2422H 3119RP3",         mode = "preferred", position = "0x360",    scale = 1 })  -- Dell 1920x1080 (left)
-hl.monitor({ output = "desc:AOC Q27G42XE 1O0R4HA008572",            mode = "2560x1440@144", position = "1920x0",   scale = 1 })  -- AOC 2560x1440, 144 Hz (EDID-preferred mode is 60 Hz)
-hl.monitor({ output = "desc:Dell Inc. DELL U2422H 85LJRP3",         mode = "preferred", position = "4480x360", scale = 1 })  -- Dell 1920x1080 (right)
+-- Two layouts. Both are decided here at config load: monitor rules applied at load work reliably, rules pushed later at
+-- runtime do not always re-enable a disabled output, so every layout change goes through `hyprctl reload` and this block.
+--  * site layout: home or office, by whichever monitors are connected. Externals are matched by make/model/serial ("desc:"
+--    from hyprctl monitors), so the port they hang off does not matter; unknown monitors fall through to the "auto" rule
+--    at the end (which must stay LAST: first matching rule wins).
+--  * single monitor (Super+P, scripts/single-monitor.sh): one external at its highest resolution and refresh rate,
+--    every other output off. The script writes its pick to $XDG_RUNTIME_DIR/hypr-single-monitor and reloads; while that
+--    file exists it is applied instead of the site layout.
+local single_monitor_file = (os.getenv("XDG_RUNTIME_DIR") or "/tmp") .. "/hypr-single-monitor"
+local single_monitor_sh   = os.getenv("HOME") .. "/.config/hypr/scripts/single-monitor.sh"
+local function read_single_monitor()   -- line 1: "<output> <WxH@Hz>", then one output name per line to disable
+    local f = io.open(single_monitor_file)
+    if not f then return nil end
+    local pick = { disable = {} }
+    for line in f:lines() do
+        if not pick.name then pick.name, pick.mode = line:match("^(%S+)%s+(%S+)")
+        elseif line ~= "" then pick.disable[#pick.disable + 1] = line end
+    end
+    f:close()
+    return pick.name and pick or nil
+end
+
+-- "WxH@Hz" with the highest refresh rate (at most `max_hz`) the connected monitor whose description contains `desc` offers at
+-- that resolution; `fallback` when it is not connected. hl.get_monitors() lists enabled monitors only.
+local function best_mode(desc, w, h, fallback, max_hz)
+    local best
+    for _, m in ipairs(hl.get_monitors()) do
+        if m.description and m.description:find(desc, 1, true) and type(m.available_modes) == "table" then
+            for _, mode in ipairs(m.available_modes) do
+                if mode.width == w and mode.height == h and mode.refresh_rate <= (max_hz or math.huge) + 0.5
+                   and (not best or mode.refresh_rate > best) then best = mode.refresh_rate end
+            end
+        end
+    end
+    return best and string.format("%dx%d@%d", w, h, math.floor(best + 0.5)) or fallback
+end
 
 -- laptop panel (eDP-1): on at home and on the road, off whenever an office monitor is connected
 local office_monitors = { "AOC Q27G42XE", "DELL U2422H" }
@@ -29,20 +55,46 @@ local function docked()
     end
     return false
 end
--- rules applied at config load work reliably; rules pushed later at runtime do not always re-enable a disabled
--- output, so on a dock/undock we simply reload the config and let this block run again.
-local laptop_panel_docked = docked()
-if laptop_panel_docked then
-    hl.monitor({ output = "eDP-1", disabled = true })
+-- everything this block derives from the connected monitors; when a hotplug changes it, the config is reloaded
+-- The AOC advertises up to 180 Hz over the dock's DisplayPort, but at 180 Hz the modeset succeeds and the monitor shows
+-- "no signal". 144 Hz works from a fresh boot; switching to it live right after the 180 Hz attempt hung the compositor in
+-- the DRM atomic commit (NVIDIA, 2026-10-07), so change rates by reload only when nothing is already wrong. Over the laptop's
+-- own HDMI port 144 Hz fails the modeset and falls back to 60 Hz; 120 Hz works there.
+local AOC_MAX_HZ = 144
+local function layout_key() return tostring(docked()) .. " " .. best_mode("AOC Q27G42XE", 2560, 1440, "preferred", AOC_MAX_HZ) end
+local loaded_layout_key = layout_key()
+
+local single_monitor = read_single_monitor()
+if single_monitor then
+    hl.monitor({ output = single_monitor.name, mode = single_monitor.mode, position = "0x0", scale = 1 })
+    for _, name in ipairs(single_monitor.disable) do hl.monitor({ output = name, disabled = true }) end
 else
-    hl.monitor({ output = "eDP-1", mode = "preferred", position = "0x160", scale = 1.25 }) -- 2560x1600 -> 2048x1280 logical
+    -- home: laptop panel left (bottom-aligned), Lenovo, HP
+    hl.monitor({ output = "desc:Lenovo Group Limited G27q-20 U63330HD", mode = "2560x1440@120", position = "2048x0",   scale = 1 })  -- Lenovo 2560x1440, 120 Hz (its EDID-preferred mode is only 60 Hz)
+    hl.monitor({ output = "desc:HP Inc. HP E24u G5 CN43172GTD",        mode = "preferred", position = "4608x360", scale = 1 })  -- HP 1920x1080
+    -- office: Dell, AOC, Dell, bottom-aligned, laptop panel off. All three hang off the dock (left Dell on its HDMI port, AOC
+    -- and right Dell on DisplayPort) and reach the laptop as DP-3/4/5, hence the serial matching. The AOC runs at the
+    -- highest 1440p rate its link offers up to AOC_MAX_HZ (its EDID-preferred mode is 60 Hz).
+    hl.monitor({ output = "desc:Dell Inc. DELL U2422H 3119RP3",         mode = "preferred", position = "0x360",    scale = 1 })  -- Dell 1920x1080 (left, dock HDMI)
+    hl.monitor({ output = "desc:AOC Q27G42XE 1O0R4HA008572",            mode = best_mode("AOC Q27G42XE", 2560, 1440, "preferred", AOC_MAX_HZ), position = "1920x0", scale = 1 })  -- AOC 2560x1440
+    hl.monitor({ output = "desc:Dell Inc. DELL U2422H 85LJRP3",         mode = "preferred", position = "4480x360", scale = 1 })  -- Dell 1920x1080 (right)
+
+    if docked() then
+        hl.monitor({ output = "eDP-1", disabled = true })
+    else
+        hl.monitor({ output = "eDP-1", mode = "preferred", position = "0x160", scale = 1.25 }) -- 2560x1600 -> 2048x1280 logical
+    end
 end
 -- XWayland marks no output as RandR "primary", so Wine/Proton games enumerate the first X output (here the HP 1080p)
 -- and offer only its modes. Make the monitor that hosts workspace 1 (where games open, see windows-apps-ws1) the primary.
 local set_x11_primary = "sleep 2; m=$(hyprctl -j workspaces | jq -r '.[] | select(.id==1) | .monitor'); "
                      .. "[ -n \"$m\" ] && xrandr --output \"$m\" --primary"
 local function on_monitor_change()
-    if docked() ~= laptop_panel_docked then hl.exec_cmd("hyprctl reload") end
+    if read_single_monitor() then
+        hl.exec_cmd(single_monitor_sh .. " refresh")   -- re-pick; the script reloads only when the pick changed
+    elseif layout_key() ~= loaded_layout_key then
+        hl.exec_cmd("hyprctl reload")
+    end
     hl.exec_cmd(set_x11_primary)
 end
 hl.on("monitor.added",   on_monitor_change)
@@ -196,6 +248,7 @@ hl.bind(mod .. " + SHIFT + D", hl.dsp.exec_cmd(menu))
 hl.bind(mod .. " + CTRL + L",  hl.dsp.exec_cmd(lock))
 hl.bind(mod .. " + SHIFT + Q", hl.dsp.window.close())
 hl.bind(mod .. " + ALT + M",   hl.dsp.exec_cmd("firefox"))
+hl.bind(mod .. " + P",         hl.dsp.exec_cmd(single_monitor_sh))   -- single external monitor <-> site layout (see monitors)
 
 -- keyboard layout (old setxkbmap se / us binds)
 hl.bind("ALT + SUPER + S", hl.dsp.exec_cmd("hyprctl switchxkblayout all 1"))

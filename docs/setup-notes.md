@@ -66,10 +66,29 @@ the login and lock screens in [login-and-lock-screen.md](login-and-lock-screen.m
   (`desc:` in Hyprland, quoted string in Sway), so home (Lenovo + HP) and office (Dell, AOC, Dell) are
   both listed and only the connected ones apply; unknown monitors fall through to auto placement.
   The entries are the author's monitors: get yours from `hyprctl monitors` or `swaymsg -t get_outputs` and replace them.
-- Laptop panel (eDP-1): on at home and on the road, off at the office. Hyprland does this in Lua (`update_laptop_panel` in
-  `hyprland.lua`: checks `hl.get_monitors()` for an office description, re-runs on `monitor.added`/`monitor.removed`).
+- Office: the three monitors hang off the dock (left Dell on its HDMI port, AOC and right Dell on DisplayPort) and reach the
+  laptop as DP-3/4/5, so connector names say nothing about the layout; the serial matching does the work. The AOC rule asks for
+  the highest 1440p refresh rate the monitor offers over the current link, capped at `AOC_MAX_HZ` = 144 (`best_mode()` in
+  `hyprland.lua` reads `available_modes`). It advertises 180 Hz over the dock's DisplayPort, but there Hyprland modesets fine
+  and the monitor shows "no signal". 144 Hz works from a fresh boot; switching 180 -> 120 -> 144 live on 2026-10-07 left
+  Hyprland's main thread in the DRM atomic-commit ioctl in D state and froze the session (NVIDIA), so a reboot was needed.
+  Over the laptop's own HDMI port 144 Hz fails the modeset and Hyprland falls back to 60 Hz. The same cap sits in
+  `single-monitor.sh` (`max_hz`, override with `SINGLE_MONITOR_MAX_HZ`).
+- Laptop panel (eDP-1): on at home and on the road, off at the office. Hyprland does this in Lua (`docked()` in `hyprland.lua`
+  checks `hl.get_monitors()` for an office description). Everything the monitors block derives from the connected monitors is
+  folded into `layout_key()`; on `monitor.added`/`monitor.removed` the config reloads only when that key changed, because
+  monitor rules pushed at runtime do not always re-enable a disabled output while rules applied at load do.
   Sway cannot do conditionals, so kanshi does it there: profiles in `~/.config/kanshi/config`, started by `exec kanshi`
   in the Sway config.
+- Super+P (Hyprland): `~/.config/hypr/scripts/single-monitor.sh` toggles between the site layout and a single external monitor:
+  the external with the highest resolution, then refresh rate up to 144 Hz (`hyprctl -j monitors all`), at that mode at 0x0, every other
+  output off including the laptop panel. The pick is written to `$XDG_RUNTIME_DIR/hypr-single-monitor` and `hyprctl reload`
+  applies it, since `hyprland.lua` reads that file first and skips the site layout while it exists. On hotplug in single mode
+  the config calls `single-monitor.sh refresh`, which re-picks (a bigger monitor takes over; when the last external goes the
+  flag is removed and the site layout returns). After every change the script sends Waybar SIGUSR2 so it rebuilds its
+  per-output bars, or starts it again if it died (the bar has vanished once after a toggle), and on the way back it moves the
+  workspaces to the monitors they were on before (map saved in `hypr-single-monitor.workspaces`). With no external connected
+  the bind only shows a notification. Changing the AOC's refresh rate live is where the session froze; prefer a reboot for that.
 - Hyprland Lua gotchas found: a monitor rule containing `disabled = false` is silently ignored (use a rule without the key
   to enable), and the catch-all `output = ""` rule must be the last `hl.monitor` call.
 - Bar workspaces are per monitor (`all-outputs: false`); each screen's bar shows only its own workspaces.
