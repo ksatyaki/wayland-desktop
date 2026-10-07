@@ -183,35 +183,38 @@
         "max": 100,
         "orientation": "horizontal"
     },
+    // Quick-launch apps run in their own transient unit (systemd-run), not as
+    // waybar children: waybar.service has MemoryMax=1G and the cgroup OOM killer
+    // would otherwise kill Steam etc. (seen 2026-10-07).
     "custom/app-term": {
         "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf120</span>",
         "tooltip-format": "Alacritty",
-        "on-click": "alacritty"
+        "on-click": "systemd-run --user -q --collect -- alacritty"
     },
     "custom/app-files": {
         "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf07b</span>",
         "tooltip-format": "Files (pcmanfm-qt)",
-        "on-click": "pcmanfm-qt"
+        "on-click": "systemd-run --user -q --collect -- pcmanfm-qt"
     },
     "custom/app-browser": {
         "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf269</span>",
         "tooltip-format": "Firefox",
-        "on-click": "firefox"
+        "on-click": "systemd-run --user -q --collect -- firefox"
     },
     "custom/app-code": {
         "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>\ue70c</span>",
         "tooltip-format": "VS Code Insiders",
-        "on-click": "code-insiders"
+        "on-click": "systemd-run --user -q --collect -- code-insiders"
     },
     "custom/app-claude": {
         "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>\udb81\udea9</span>",
         "tooltip-format": "Claude",
-        "on-click": "claude-desktop"
+        "on-click": "systemd-run --user -q --collect -- claude-desktop"
     },
     "custom/app-steam": {
         "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>\uf1b6</span>",
         "tooltip-format": "Steam",
-        "on-click": "steam"
+        "on-click": "systemd-run --user -q --collect -- steam"
     },
     "custom/perf": {
         "exec": "~/.config/waybar/scripts/perf.sh",
