@@ -68,15 +68,22 @@ backend() {   # <output> -> sets BTYPE / BARG; cached until the output's serial 
     f="$STATE/$out.backend"
     serial=$(field "$out" serial); serial=${serial:--}
     if [ -r "$f" ]; then
-        IFS=$'\t' read -r BTYPE BARG cser < "$f"
+        # BARG is "-" when empty: tab is whitespace to read, so an empty field would collapse and shift the serial
+        # into BARG, the cache would never match, and "ddcutil detect" would run on every tick (it did, 2026-10-07:
+        # the dock's monitors answer no DDC, the probes piled up, and the i2c traffic blanked the HDMI monitor).
+        IFS=$'\t' read -r BTYPE BARG cser < "$f"; [ "$BARG" = - ] && BARG=
         if [ "$cser" = "$serial" ]; then
             [ "$BTYPE" != none ] && return
             # a monitor that did not answer may only have been missing ddcutil or the i2c group: re-probe now and then
             [ $(( $(date +%s) - $(stat -c %Y "$f") )) -lt 600 ] && return
         fi
     fi
-    read -r BTYPE BARG <<<"$(detect_backend "$out" "$serial") "
-    printf '%s\t%s\t%s\n' "$BTYPE" "$BARG" "$serial" > "$f"
+    # one probe at a time, machine-wide: ddcutil detect scans every i2c bus and takes seconds; a tick that
+    # finds a probe already running reports "none" for now and leaves the cache alone
+    local det
+    det=$( { flock -n 8 || exit 3; detect_backend "$out" "$serial"; } 8>"$STATE/detect.lock" ) || { BTYPE=none; BARG=; return; }
+    read -r BTYPE BARG <<<"$det "
+    printf '%s\t%s\t%s\n' "$BTYPE" "${BARG:--}" "$serial" > "$f"
 }
 
 # ---------------------------------------------------------------- hardware
