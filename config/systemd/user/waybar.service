@@ -1,0 +1,19 @@
+[Unit]
+Description=Waybar (Hyprland bar)
+# Lives and dies with the Hyprland session: a new session restarts it, and a stale bar from an old
+# session cannot linger. On 2026-10-07 an orphaned waybar from a previous session had leaked to 28 GB
+# (it grows on output hotplug; a flapping dock fed it) and the resulting swap thrashing stalled the
+# whole desktop, which looked like game stutter.
+PartOf=hyprland-session.target
+After=hyprland-session.target
+
+[Service]
+ExecStart=/usr/bin/waybar -c %h/.config/waybar/config-hyprland.jsonc
+Restart=on-failure
+RestartSec=2
+# A leak gets the bar OOM-killed (and restarted) long before it can push the machine into swap.
+MemoryMax=1G
+MemorySwapMax=0
+
+[Install]
+WantedBy=hyprland-session.target

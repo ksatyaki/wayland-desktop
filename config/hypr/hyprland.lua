@@ -372,9 +372,12 @@ hl.on("hyprland.start", function()
     -- tell systemd --user the graphical session is up: xdg-desktop-portal (screen sharing, file dialogs)
     -- depends on graphical-session.target and never starts otherwise
     hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE XDG_SESSION_TYPE && "
-             .. "dbus-update-activation-environment --systemd WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE && systemctl --user start hyprland-session.target")
+             .. "dbus-update-activation-environment --systemd WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE && systemctl --user start hyprland-session.target && "
+             -- waybar runs as a user service (config/systemd/user/waybar.service): memory-capped and tied to the session,
+             -- so a bar from an earlier session cannot outlive it. Restart, not start: the target may still be active from
+             -- the previous session (nothing stops it on exit), and a fresh start re-reads the imported WAYLAND_DISPLAY.
+             .. "systemctl --user restart waybar.service")
     hl.exec_cmd(set_x11_primary)
-    hl.exec_cmd("waybar -c ~/.config/waybar/config-hyprland.jsonc")
     hl.exec_cmd("awww-daemon")          -- wallpaper daemon (backend used by waypaper)
     hl.exec_cmd("sleep 1 && waypaper --restore")  -- reapply the wallpaper picked in waypaper
     hl.exec_cmd("hypridle")

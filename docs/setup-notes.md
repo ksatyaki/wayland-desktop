@@ -157,7 +157,7 @@ the login and lock screens in [login-and-lock-screen.md](login-and-lock-screen.m
 | Reload Sway (also restarts Waybar) | `swaymsg reload` |
 | Validate Hyprland config | `Hyprland --verify-config` |
 | Reload Hyprland | automatic on save, or `hyprctl reload` |
-| Restart Waybar under Hyprland | `pkill waybar; setsid waybar -c ~/.config/waybar/config-hyprland.jsonc >/dev/null 2>&1 &` |
+| Restart Waybar under Hyprland | `systemctl --user restart waybar.service` (a memory-capped user service tied to hyprland-session.target; `journalctl --user -u waybar` for its output) |
 | Reload mako | `makoctl reload` (fuzzel reads its file on every launch) |
 | Monitor names / descriptions | `hyprctl monitors` or `swaymsg -t get_outputs` |
 | Try a monitor layout (not persistent) | `wdisplays` |
