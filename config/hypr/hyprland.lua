@@ -97,7 +97,12 @@ local function on_monitor_change()
     end
     hl.exec_cmd(set_x11_primary)
 end
-hl.on("monitor.added",   on_monitor_change)
+hl.on("monitor.added", function()
+    on_monitor_change()
+    -- awww-daemon remembers the wallpaper per connector name, and a dock replug brings its monitors back under new
+    -- names (DP-2..4 became DP-6..8), which it then leaves black: re-apply the wallpaper picked in waypaper.
+    hl.exec_cmd("sleep 1 && waypaper --restore")
+end)
 hl.on("monitor.removed", on_monitor_change)
 hl.monitor({ output = "",         mode = "preferred", position = "auto",   scale = "auto" }) -- anything else (must stay LAST: first matching rule wins)
 
