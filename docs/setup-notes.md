@@ -20,7 +20,7 @@ the login and lock screens in [login-and-lock-screen.md](login-and-lock-screen.m
 
 | File | Purpose |
 |---|---|
-| `~/.config/waybar/config.jsonc`, `config-hyprland.jsonc` | Bar list for Sway / Hyprland: one entry per output, each including the module file below and pointing the brightness module at that output |
+| `~/.config/waybar/config.jsonc`, `config-hyprland.jsonc` | Bar entry for Sway / Hyprland: a single bar for every output, including the module file below |
 | `~/.config/waybar/modules-sway.jsonc` | The modules themselves for Sway: bottom position, hover volume slider, icons written as `\u` escapes |
 | `~/.config/waybar/modules-hyprland.jsonc` | Same modules using the `hyprland/*` workspace, window, submap and language modules |
 | `~/.config/waybar/style.css` | Solid Catppuccin Mocha stylesheet, workspace highlight for both compositors, slider styling |
@@ -105,14 +105,13 @@ the login and lock screens in [login-and-lock-screen.md](login-and-lock-screen.m
   give it a new name, add the name to `modules-left` in both files and to the CSS selector list. Nerd Font glyph codes: https://www.nerdfonts.com/cheat-sheet
   Launcher colours are per-module rules in the same CSS block: Firefox `#ff7139`, VS Code Insiders `#24bfa5`, Claude `#d97757`, Steam `#66c0f4`;
   terminal and folder use `@subtext` and turn `@text` on hover. A new launcher without its own rule inherits the grey.
-- Brightness is per monitor. Waybar cannot vary a module between the copies of one bar, so `config*.jsonc` is a list of bars,
-  one per output, each `include`-ing `modules-*.jsonc` and overriding only the brightness module's `exec` and scroll commands
-  with its own output name. A connector that is not plugged in is skipped, so hotplug needs no reload — but an output with no
-  entry gets **no bar at all**, so the list has to name every connector the GPU exposes, not just the ones in use:
-  `ls -d /sys/class/drm/card*-* | sed 's|.*/card[0-9]*-||'` (here `eDP-1`, `DP-1`..`DP-4`, `HDMI-A-1`).
-- There is no catch-all entry, because waybar cannot express one: an `"output"` **array** is read as a whitelist, so
-  `["!DP-1", "!DP-2", ...]` matches nothing at all and those monitors silently lose their bar. Negation works only as a bare
-  string (`"output": "!DP-1"`), which holds a single name. Verified on waybar 0.15.
+- Brightness is per monitor. `config*.jsonc` holds a single bar entry with no `"output"` key, so waybar puts it on every
+  output, including connectors that did not exist when it started. Waybar exports `WAYBAR_OUTPUT_NAME` to a custom module's
+  `exec` (not to its scroll commands), so the brightness module runs `brightness.sh status self` and the scroll commands use
+  `focused`, which is the monitor under the cursor. Do not go back to one bar per connector name: a dock's MST monitors come
+  back as new connectors after a replug (`DP-2`..`DP-4` became `DP-6`..`DP-8` on 2026-10-08) and lose their bar, since an
+  output with no matching entry gets none. An `"output"` **array** is a whitelist, so `["!DP-1", ...]` is not a catch-all
+  either; negation works only as a bare string holding one name. Verified on waybar 0.15.
 - `scripts/brightness.sh status|set <output>` picks the backend per monitor and caches it in `$XDG_RUNTIME_DIR/brightness`:
   a panel under `/sys/class/backlight` (`brightnessctl`), otherwise the i2c bus that `ddcutil detect` reports for that DRM
   connector — matched on `DRM_connector` first, on the EDID serial otherwise. A monitor that answers neither prints nothing,

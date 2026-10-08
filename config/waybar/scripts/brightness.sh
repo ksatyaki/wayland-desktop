@@ -2,7 +2,10 @@
 # Per-monitor brightness, for the waybar module and the XF86MonBrightness keys.
 #
 #   brightness.sh status <output>                waybar JSON for that output's bar
-#   brightness.sh set    <output> 5%+|5%-|50%    <output> may be "focused"
+#   brightness.sh set    <output> 5%+|5%-|50%
+#   <output> may be "focused", or "self" for the output of the bar running the
+#   script: waybar exports WAYBAR_OUTPUT_NAME to a custom module's exec, but not
+#   to its on-scroll commands, so those use "focused" (the monitor under the cursor).
 #
 # The laptop panel goes through /sys/class/backlight (brightnessctl); external
 # monitors go over DDC/CI (ddcutil), which needs i2c access -- see docs/bar.md.
@@ -154,6 +157,7 @@ adjust() {   # <5%+|5%-|50%>
 }
 
 cmd=${1:-status}; OUT=${2:-focused}
+[ "$OUT" = self ] && OUT=${WAYBAR_OUTPUT_NAME:-focused}
 [ "$OUT" = focused ] && OUT=$(outputs | jq -r '.[]|select(.focused)|.name' | head -1)
 [ -n "$OUT" ] || exit 0
 case $cmd in

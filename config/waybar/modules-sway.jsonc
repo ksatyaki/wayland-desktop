@@ -91,7 +91,7 @@
         "return-type": "json",
         "interval": 60,
         "signal": 9,
-        "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>{icon}</span> {}",
+        "format": "<span size='large' font_family='JetBrainsMono Nerd Font'>{icon}</span> {text}",
         "format-icons": [
             "\udb80\udc7a",
             "\udb80\udc7b",
@@ -126,7 +126,7 @@
     // (see scripts/brightness.sh): the laptop panel goes through /sys/class/backlight,
     // external monitors over DDC/CI. On a monitor that answers neither, the module hides.
     "custom/brightness": {
-        "exec": "~/.config/waybar/scripts/brightness.sh status focused",
+        "exec": "~/.config/waybar/scripts/brightness.sh status self",
         "on-scroll-up": "~/.config/waybar/scripts/brightness.sh set focused 5%+",
         "on-scroll-down": "~/.config/waybar/scripts/brightness.sh set focused 5%-",
         "return-type": "json",
