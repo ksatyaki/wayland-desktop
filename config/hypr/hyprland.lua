@@ -123,6 +123,13 @@ hl.env("QT_QPA_PLATFORMTHEME", "qt6ct") -- Qt style/icons/fonts from ~/.config/q
 -- Must live here: Hyprland runs in the session scope, not a systemd user unit, so ~/.config/
 -- environment.d is never read. Also in ~/.zprofile for Sway.
 hl.env("FREETYPE_PROPERTIES", "truetype:interpreter-version=35 cff:no-stem-darkening=0")
+-- IBus input method (Tamil phonetic via m17n, engines picked in ibus-setup). Every toolkit talks to the daemon
+-- started in the autostart block below; XMODIFIERS covers XWayland/X11 apps.
+hl.env("GTK_IM_MODULE", "ibus")
+hl.env("QT_IM_MODULE", "ibus")
+hl.env("XMODIFIERS", "@im=ibus")
+hl.env("SDL_IM_MODULE", "ibus")
+hl.env("GLFW_IM_MODULE", "ibus")
 
 ------------------------------------------------------------------ look & feel
 hl.config({
@@ -376,8 +383,8 @@ hl.window_rule({
 hl.on("hyprland.start", function()
     -- tell systemd --user the graphical session is up: xdg-desktop-portal (screen sharing, file dialogs)
     -- depends on graphical-session.target and never starts otherwise
-    hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE XDG_SESSION_TYPE && "
-             .. "dbus-update-activation-environment --systemd WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE && systemctl --user start hyprland-session.target && "
+    hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE XDG_SESSION_TYPE GTK_IM_MODULE QT_IM_MODULE XMODIFIERS && "
+             .. "dbus-update-activation-environment --systemd WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE GTK_IM_MODULE QT_IM_MODULE XMODIFIERS && systemctl --user start hyprland-session.target && "
              -- waybar runs as a user service (config/systemd/user/waybar.service): memory-capped and tied to the session,
              -- so a bar from an earlier session cannot outlive it. Restart, not start: the target may still be active from
              -- the previous session (nothing stops it on exit), and a fresh start re-reads the imported WAYLAND_DISPLAY.
@@ -387,6 +394,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("sleep 1 && waypaper --restore")  -- reapply the wallpaper picked in waypaper
     hl.exec_cmd("hypridle")
     hl.exec_cmd("mako")
+    hl.exec_cmd("ibus-daemon -rxRd")   -- input method: -r replace a stale daemon, -x XIM for X11 apps, -R restart engines, -d daemonize
     hl.exec_cmd("systemctl --user start hyprpolkitagent")
     hl.exec_cmd(terminal)
     hl.exec_cmd("claude-desktop")
