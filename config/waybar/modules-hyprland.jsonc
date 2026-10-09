@@ -23,6 +23,7 @@
     "modules-right": [
         "tray",
         "hyprland/language",
+        "custom/ibus",
         "group/audio",
         "custom/bt-battery",
         "network",
@@ -166,6 +167,12 @@
         "tooltip-format": "{long}",
         "on-click": "hyprctl switchxkblayout all next",
         "keyboard-name": "at-translated-set-2-keyboard"
+    },
+    "custom/ibus": {
+        "exec": "~/.config/waybar/scripts/ibus.sh",
+        "return-type": "json",
+        "on-click": "~/.config/waybar/scripts/ibus.sh toggle",
+        "tooltip": true
     },
     "group/audio": {
         "orientation": "inherit",

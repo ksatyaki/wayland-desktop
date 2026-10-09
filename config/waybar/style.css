@@ -118,6 +118,8 @@ window#waybar.empty #window {
 #tray { border-left: none; }
 
 #language    { color: @mauve; }
+/* input method: part of the keyboard item, so the same colour and no separator */
+#custom-ibus { color: @mauve; padding: 0 10px 0 0; margin: 4px 0; }
 #pulseaudio  { color: @pink; }
 #pulseaudio.muted { color: @overlay; }
 /* headset battery: part of the volume item, so the volume's colour and no separator */
