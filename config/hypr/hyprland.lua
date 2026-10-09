@@ -125,6 +125,8 @@ hl.env("QT_QPA_PLATFORMTHEME", "qt6ct") -- Qt style/icons/fonts from ~/.config/q
 hl.env("FREETYPE_PROPERTIES", "truetype:interpreter-version=35 cff:no-stem-darkening=0")
 -- IBus input method (Tamil phonetic via m17n, engines picked in ibus-setup). Every toolkit talks to the daemon
 -- started in the autostart block below; XMODIFIERS covers XWayland/X11 apps.
+-- Super+space is taken by the us/se xkb toggle below, so the IBus engine switch is Alt+Shift+space:
+--   gsettings set org.freedesktop.ibus.general.hotkey triggers "['<Alt><Shift>space']"
 hl.env("GTK_IM_MODULE", "ibus")
 hl.env("QT_IM_MODULE", "ibus")
 hl.env("XMODIFIERS", "@im=ibus")
