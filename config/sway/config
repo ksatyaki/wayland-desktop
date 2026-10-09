@@ -6,8 +6,9 @@ set $term tabby
 set $menu fuzzel
 set $lock swaylock -f   # look: ~/.config/swaylock/config
 
-# DOOM Eternal font; Bold is caps-only, suits title bars (sway takes no trailing comment on a font line)
-font pango:Eternal UI Bold 11
+# title font and window colours: ~/.config/sway/theme (Catppuccin Mocha with the DOOM Eternal font by default;
+# ./install.sh --theme dark-ages puts the DOOM: The Dark Ages one there)
+include ~/.config/sway/theme
 
 ### Look ################################################################
 
@@ -17,12 +18,6 @@ gaps inner 8
 gaps outer 4
 smart_gaps on
 smart_borders on
-
-# Catppuccin Mocha           border   bg       text     indicator child_border
-client.focused               #89b4fa  #89b4fa  #1e1e2e  #f5c2e7   #89b4fa
-client.focused_inactive      #45475a  #45475a  #cdd6f4  #45475a   #45475a
-client.unfocused             #313244  #1e1e2e  #6c7086  #313244   #313244
-client.urgent                #f38ba8  #f38ba8  #1e1e2e  #f38ba8   #f38ba8
 
 # wallpaper: picked in waypaper, restored at login (see exec lines below)
 # output * bg ~/Pictures/Bliss.png fill

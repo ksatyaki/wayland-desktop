@@ -1,0 +1,17 @@
+# mako notifications, DOOM: The Dark Ages look (palette: themes/dark-ages/README.md). makoctl reload after editing.
+font=Cormorant SemiBold 13
+background-color=#0a2022ee
+text-color=#e8f4f3
+border-color=#365557
+border-size=1
+border-radius=0
+padding=12
+margin=10
+progress-color=over #2a4347
+default-timeout=6000
+anchor=top-right
+
+[urgency=high]
+border-color=#d0602a
+text-color=#fff6ee
+default-timeout=0

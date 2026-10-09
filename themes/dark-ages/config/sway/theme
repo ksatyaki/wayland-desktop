@@ -1,0 +1,10 @@
+# Sway look, DOOM: The Dark Ages (included by ~/.config/sway/config). Palette: themes/dark-ages/README.md.
+
+# the Cormorant serif of the Dark Ages menus (installed to ~/.fonts/cormorant by the install script)
+font pango:Cormorant SemiBold 12
+
+# Dark Ages                  border   bg       text     indicator child_border
+client.focused               #7fb3ae  #0f3033  #e8f4f3  #ff9a5c   #7fb3ae
+client.focused_inactive      #2a4347  #0a2022  #a4bebf  #2a4347   #2a4347
+client.unfocused             #2a4347  #061a1c  #5f7f80  #2a4347   #2a4347
+client.urgent                #d0602a  #4a2a20  #fff6ee  #d0602a   #d0602a

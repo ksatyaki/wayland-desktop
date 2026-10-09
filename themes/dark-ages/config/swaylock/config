@@ -1,0 +1,33 @@
+# DOOM: The Dark Ages lock screen for Sway (same wallpaper, font and palette as the Dark Ages login theme).
+# swaylock has no image widgets, so the spear-tipped bars of the hyprlock version become a plain teal ring.
+image=~/Pictures/Wallpapers/revelations.jpg
+scaling=fill
+font=Cormorant SemiBold
+font-size=28
+indicator-radius=110
+indicator-thickness=4
+indicator-idle-visible
+show-keyboard-layout
+color=061a1c
+inside-color=0a2022e6
+inside-clear-color=0a2022e6
+inside-ver-color=0f3033e6
+inside-wrong-color=4a2a20e6
+ring-color=365557
+ring-clear-color=7fb3ae
+ring-ver-color=ff9a5c
+ring-wrong-color=ff5a36
+line-color=00000000
+line-clear-color=00000000
+line-ver-color=00000000
+line-wrong-color=00000000
+separator-color=00000000
+key-hl-color=7fb3ae
+bs-hl-color=ff9a5c
+text-color=e8f4f3
+text-clear-color=e8f4f3
+text-ver-color=e8f4f3
+text-wrong-color=ff9a5c
+layout-bg-color=0a2022cc
+layout-border-color=365557
+layout-text-color=a4bebf

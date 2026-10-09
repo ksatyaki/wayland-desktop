@@ -7,6 +7,17 @@ local menu     = "fuzzel"
 local lock     = "pidof hyprlock || hyprlock"
 local brightness = os.getenv("HOME") .. "/.config/waybar/scripts/brightness.sh"
 
+-- look: colours and fonts come from ~/.config/hypr/theme.lua (Catppuccin Mocha by default, the DOOM: The Dark Ages
+-- theme with ./install.sh --theme dark-ages); the fallback below keeps the config loading if the file is missing
+local theme_ok, theme = pcall(dofile, os.getenv("HOME") .. "/.config/hypr/theme.lua")
+if not theme_ok or type(theme) ~= "table" then
+    theme = { font = "Eternal UI", rounding = 8, border_active = "rgba(89b4faee)", border_inactive = "rgba(313244aa)",
+              border_locked = "rgba(f38ba8ee)", group_active = "rgba(89b4faee)", group_inactive = "rgba(45475aee)",
+              group_locked_active = "rgba(f38ba8ee)", group_locked_inactive = "rgba(45475aee)",
+              group_text = "rgba(1e1e2eff)", group_text_inactive = "rgba(cdd6f4ff)", group_font_weight = "bold",
+              group_rounding = 6, layer_rules = {} }
+end
+
 ------------------------------------------------------------------ monitors
 -- Two layouts. Both are decided here at config load: monitor rules applied at load work reliably, rules pushed later at
 -- runtime do not always re-enable a disabled output, so every layout change goes through `hyprctl reload` and this block.
@@ -143,8 +154,8 @@ hl.config({
         gaps_out    = 8,
         border_size = 2,
         col = {
-            active_border   = "rgba(89b4faee)",   -- Catppuccin Mocha blue
-            inactive_border = "rgba(313244aa)",
+            active_border   = theme.border_active,
+            inactive_border = theme.border_inactive,
         },
         resize_on_border = true,
         allow_tearing    = false,
@@ -154,34 +165,34 @@ hl.config({
     group = {
         auto_group = true,                     -- windows opened while a group is focused join it
         col = {
-            border_active          = "rgba(89b4faee)",
-            border_inactive        = "rgba(313244aa)",
-            border_locked_active   = "rgba(f38ba8ee)",
-            border_locked_inactive = "rgba(313244aa)",
+            border_active          = theme.border_active,
+            border_inactive        = theme.border_inactive,
+            border_locked_active   = theme.border_locked,
+            border_locked_inactive = theme.border_inactive,
         },
         groupbar = {                           -- the tab strip above a group (i3 "tabbed")
             enabled       = true,
             render_titles = true,
-            font_family   = "Eternal UI",      -- DOOM Eternal font; the Bold weight is caps-only
-            font_weight_active   = "bold",
-            font_weight_inactive = "bold",
+            font_family   = theme.font,
+            font_weight_active   = theme.group_font_weight,
+            font_weight_inactive = theme.group_font_weight,
             font_size     = 14,
             height        = 24,
             gradients     = true,
-            gradient_rounding = 6,
+            gradient_rounding = theme.group_rounding,
             indicator_height  = 0,
-            text_color          = "rgba(1e1e2eff)",
-            text_color_inactive = "rgba(cdd6f4ff)",
+            text_color          = theme.group_text,
+            text_color_inactive = theme.group_text_inactive,
             col = {
-                active          = "rgba(89b4faee)",
-                inactive        = "rgba(45475aee)",
-                locked_active   = "rgba(f38ba8ee)",
-                locked_inactive = "rgba(45475aee)",
+                active          = theme.group_active,
+                inactive        = theme.group_inactive,
+                locked_active   = theme.group_locked_active,
+                locked_inactive = theme.group_locked_inactive,
             },
         },
     },
     decoration = {
-        rounding = 8,
+        rounding = theme.rounding,
         active_opacity   = 1.0,
         inactive_opacity = 1.0,
         shadow = { enabled = true, range = 12, render_power = 3, color = 0x99000000 },
@@ -213,10 +224,12 @@ hl.config({
     misc = {
         disable_hyprland_logo   = true,
         force_default_wallpaper = 0,
-        font_family             = "Eternal UI",   -- dialogs and error overlay
+        font_family             = theme.font,     -- dialogs and error overlay
         focus_on_activate       = true,
     },
 })
+
+for _, rule in ipairs(theme.layer_rules or {}) do hl.layer_rule(rule) end
 
 -- default curves and animations (copied from the upstream example)
 hl.curve("easeOutQuint",   { type = "bezier", points = { {0.23, 1},    {0.32, 1} } })

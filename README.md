@@ -1,6 +1,6 @@
 # wayland-desktop
 
-A DOOM-flavoured Sway and Hyprland desktop: i3-style keybindings, a Waybar bar in Catppuccin Mocha, DOOM Eternal UI fonts, and matching login and lock screens. Everything needed to rebuild it is in this repo: configs mirroring `~/.config`, the SDDM theme, fonts, wallpaper and one install script. Built on Fedora 44 with an NVIDIA GPU; the installer also knows the Ubuntu/Debian package names.
+A DOOM-flavoured Sway and Hyprland desktop: i3-style keybindings, a Waybar bar, DOOM fonts, and matching login and lock screens, in two looks: DOOM Eternal (Catppuccin Mocha bar, Eternal UI fonts, the default) and [DOOM: The Dark Ages](themes/dark-ages/README.md) (`--theme dark-ages`: dark teal stone, the Cormorant serif, the game's spear-tipped menu bars, the Revelations art as wallpaper). Everything needed to rebuild it is in this repo: configs mirroring `~/.config`, the SDDM themes, fonts, wallpapers and one install script. Built on Fedora 44 with an NVIDIA GPU; the installer also knows the Ubuntu/Debian package names.
 
 <p align="center">
   <img src="docs/screenshots/login-screen.jpg" alt="DOOM login screen (SDDM)" width="800">
@@ -13,6 +13,13 @@ A DOOM-flavoured Sway and Hyprland desktop: i3-style keybindings, a Waybar bar i
   <img src="docs/screenshots/lock-screen.jpg" alt="DOOM lock screen (hyprlock)" width="800">
   <br><sub>Lock screen (hyprlock)</sub>
 </p>
+<p align="center">
+  <img src="docs/screenshots/desktop-dark-ages.jpg" alt="DOOM: The Dark Ages desktop theme" width="800">
+  <br><sub>The Dark Ages desktop theme (<code>--theme dark-ages</code>): stone bar with spear-tipped workspace marker, Revelations wallpaper</sub>
+  <br><br>
+  <img src="docs/screenshots/lock-screen-dark-ages.jpg" alt="DOOM: The Dark Ages lock screen (hyprlock)" width="800">
+  <br><sub>The Dark Ages lock screen (hyprlock)</sub>
+</p>
 
 ## Quick start
 
@@ -22,7 +29,7 @@ git clone https://github.com/ksatyaki/wayland-desktop.git && cd wayland-desktop
 ./install.sh --enable-hyprland --enable-bar --enable-theming --enable-login --packages
 ```
 
-Every `--enable-*` flag installs one component (they combine freely, `--all` takes everything). `--packages` also installs the distro packages the selected components need with `dnf` (Fedora) or `apt` (Ubuntu/Debian). Existing config is kept as `*.bak-<timestamp>`. Only the login screen, the Sway session file and `--packages` use sudo.
+Every `--enable-*` flag installs one component (they combine freely, `--all` takes everything). `--theme dark-ages` installs the components in the Dark Ages look instead of the default (see [Themes](#themes)). `--packages` also installs the distro packages the selected components need with `dnf` (Fedora) or `apt` (Ubuntu/Debian). Existing config is kept as `*.bak-<timestamp>`. Only the login screen, the Sway session file and `--packages` use sudo.
 
 ### Dependencies
 
@@ -40,6 +47,19 @@ What each component pulls in with `--packages`. The Ubuntu column is from packag
 Fonts that are not in the repo and that the bar, launcher and app theming refer to: [JetBrainsMono Nerd Font](https://www.nerdfonts.com/font-downloads) into `~/.fonts/JetBrainsMono/`, [Iosevka](https://github.com/be5invis/Iosevka/releases) and [IBM Plex Sans](https://github.com/IBM/plex/releases) into `~/.fonts/`, then `fc-cache -f`. Fedora has IBM Plex as `ibm-plex-fonts-all`, Ubuntu as `fonts-ibm-plex`.
 
 Binary files (fonts, wallpaper, theme assets) are stored with Git LFS; install `git-lfs` before cloning or run `git lfs pull` afterwards.
+
+## Themes
+
+Two looks for the same components; pick one with `--theme`, and the login screen follows it unless `--login-theme` says otherwise.
+
+- `eternal` (default): the bar in Catppuccin Mocha, the DOOM Eternal UI fonts, chamfered Eternal-style lock and login screens, the DOOM box art as wallpaper. The files in `config/`.
+- `dark-ages`: after the DOOM: The Dark Ages menus. A translucent dark teal stone bar (the wallpaper blurred behind it under Hyprland) with the active workspace on an orange spear-tipped bar and hover on a teal one, the Cormorant serif everywhere, hairline separators, the same palette for the launcher, notifications, window borders, group tabs and the Qt palette, a "STAND AND FIGHT" lock screen with the password on the orange bar, and the Revelations art as wallpaper. The files in `themes/dark-ages/config/` are laid over `config/` at install time; `themes/dark-ages/README.md` has the palette and how the shapes are made.
+
+```sh
+./install.sh --enable-hyprland --enable-bar --enable-theming --enable-login --theme dark-ages --packages
+```
+
+Switching later is the same command with the other `--theme`, then `systemctl --user restart waybar.service` (or `swaymsg reload`), `makoctl reload` and `waypaper --restore`.
 
 ## Features, one section each
 
@@ -131,11 +151,13 @@ Then fetch the fonts listed under Dependencies, edit the monitor lines for your 
 | `config/waybar/`, `config/mako/`, `config/fuzzel/`, `config/waypaper/` | `~/.config/…` | bar |
 | `wallpapers/` | `~/Pictures/Wallpapers/` | bar, hyprland, sway |
 | `fonts/doom/` | `~/.fonts/doom/` | fonts (and all of the above) |
+| `themes/dark-ages/config/` | laid over the `config/` paths above with `--theme dark-ages`; Cormorant from the login theme to `~/.fonts/cormorant/` | all |
 | `config/qt6ct/`, `config/qt5ct/`, `config/gtk-3.0/`, `config/gtk-4.0/`, `config/mimeapps.list` | `~/.config/…` | theming |
 | `home/.zprofile` | `~/.zprofile` | theming |
 | `sddm/` | `~/.config/sddm-doom-theme/`, `/usr/share/sddm/themes/`, `/etc/sddm.conf.d/` | login |
 | `tools/eternal-panel.py` | not installed: regenerates the chamfered PNG panels used by hyprlock | |
 | `tools/dark-ages-background.py` | not installed: regenerates the Dark Ages login background | |
+| `tools/dark-ages-assets.py` | not installed: regenerates the Dark Ages theme's stone texture, spear-tipped bars and rule PNGs | |
 | `tools/purge-kde-config.sh` | not installed: removes leftover Plasma/KDE config that overrides the Qt/GTK theming (`--dry-run` to preview; archives to `~/.local/state/`) | |
 | `refcard.html` | not installed: one-page keybinding and command cheatsheet, open in a browser | |
 
@@ -148,4 +170,4 @@ Then fetch the fonts listed under Dependencies, edit the monitor lines for your 
 
 ## Credits
 
-Login themes: [sddm-astronaut-theme](https://github.com/Keyitdev/sddm-astronaut-theme) by Keyitdev (GPL-3.0, see `sddm/sddm-astronaut-theme/LICENSE`); the Dark Ages theme is a restyle of it under the same licence. The Eternal UI fonts are fan-made recreations of the DOOM Eternal menu font. The Dark Ages theme uses [Cormorant](https://github.com/CatharsisFonts/Cormorant) by Christian Thalmann (SIL Open Font License). The wallpaper is the DOOM box art by Don Ivan Punchatz, © id Software, used here as fan art. Colours are [Catppuccin Mocha](https://github.com/catppuccin/catppuccin).
+Login themes: [sddm-astronaut-theme](https://github.com/Keyitdev/sddm-astronaut-theme) by Keyitdev (GPL-3.0, see `sddm/sddm-astronaut-theme/LICENSE`); the Dark Ages theme is a restyle of it under the same licence. The Eternal UI fonts are fan-made recreations of the DOOM Eternal menu font. The Dark Ages theme uses [Cormorant](https://github.com/CatharsisFonts/Cormorant) by Christian Thalmann (SIL Open Font License). The wallpapers are the DOOM box art by Don Ivan Punchatz and the DOOM: The Dark Ages "Revelations" key art, © id Software, used here as fan art. Colours of the default theme are [Catppuccin Mocha](https://github.com/catppuccin/catppuccin).

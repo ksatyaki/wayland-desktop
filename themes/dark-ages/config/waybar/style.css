@@ -1,0 +1,205 @@
+/* Waybar style — DOOM: The Dark Ages. Dark teal stone (a translucent texture, blurred wallpaper showing
+   through under Hyprland), the Cormorant serif, hairline separators, and the game's spear-tipped menu
+   bars: orange for the focused row (active workspace), teal on hover. The bars and the stone are PNGs
+   rendered by tools/dark-ages-assets.py in the repo; the bar shapes are 9-sliced so they stretch to any
+   width while the tips keep their angle. Palette: themes/dark-ages/README.md. */
+
+@define-color stone    #0a2022;   /* menu background */
+@define-color stone2   #061a1c;   /* tooltips, drawers */
+@define-color row      #0f3033;   /* lit row fill */
+@define-color hairline #2a4347;   /* row separators */
+@define-color rule     #365557;   /* header rule */
+@define-color dim      #5f7f80;   /* disabled rows, placeholders */
+@define-color muted    #86a5a7;   /* icons at rest */
+@define-color text     #a4bebf;   /* row text */
+@define-color bright   #e8f4f3;   /* focused text, the clock */
+@define-color teal     #7fb3ae;   /* lit row glow, sliders */
+@define-color orange   #ff9a5c;   /* warnings, the orange bar's text */
+@define-color ember    #d0602a;   /* the orange bar's outline */
+@define-color red      #ff5a36;   /* critical */
+
+* {
+    font-family: "Cormorant", "JetBrainsMono Nerd Font", serif;
+    font-weight: 600;             /* Cormorant SemiBold: the regular weight is too thin at bar size */
+    font-size: 21px;
+    font-feature-settings: "lnum";   /* lining figures: Cormorant defaults to old-style digits */
+    min-height: 0;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    text-shadow: none;
+}
+
+window#waybar {
+    background-color: @stone;
+    background-image: url("dark-ages-stone.png");   /* 1024x44, tiles horizontally; relative to this file */
+    background-repeat: repeat-x;
+    background-size: 1024px 44px;
+    color: @text;
+    border-top: 1px solid @rule;
+}
+
+.modules-left, .modules-center, .modules-right {
+    padding: 0 6px;
+}
+
+/* spear-tipped bars: the PNG is 120x36 logical (240x72 px); slice 28 px = the 14 px tips, drawn by border-image
+   on 14 px side borders. GTK's border-image never paints the middle, so the *-mid.png centre strip is stretched
+   over the padding box as the background. */
+#workspaces {
+    padding: 0 2px;
+}
+#workspaces button {
+    font-weight: 700;
+    color: @muted;
+    padding: 0 6px;
+    margin: 4px 1px;
+    border-style: solid;
+    border-width: 0 14px;
+    border-color: transparent;
+    border-image: none;
+    transition: all 150ms ease;
+}
+#workspaces button:hover {
+    color: @bright;
+    border-image: url("dark-ages-bar-teal.png") 0 28 0 28 / 0 14px 0 14px stretch;
+    background: url("dark-ages-bar-teal-mid.png") padding-box;
+    background-size: 100% 100%;
+}
+#workspaces button.visible {
+    color: @text;
+}
+#workspaces button.focused, #workspaces button.active {
+    color: #fff6ee;
+    border-image: url("dark-ages-bar-orange.png") 0 28 0 28 / 0 14px 0 14px stretch;
+    background: url("dark-ages-bar-orange-mid.png") padding-box;
+    background-size: 100% 100%;
+}
+#workspaces button.urgent {
+    color: #fff6ee;
+    border-image: url("dark-ages-bar-red.png") 0 28 0 28 / 0 14px 0 14px stretch;
+    background: url("dark-ages-bar-red-mid.png") padding-box;
+    background-size: 100% 100%;
+}
+
+/* app launcher buttons (custom/app-* modules): add one block per new module */
+#custom-app-term, #custom-app-files, #custom-app-browser, #custom-app-code, #custom-app-claude, #custom-app-steam {
+    color: @muted;
+    padding: 0 4px;
+    margin: 4px 0;
+    border-style: solid;
+    border-width: 0 14px;
+    border-color: transparent;
+    transition: all 150ms ease;
+}
+#custom-app-term:hover, #custom-app-files:hover, #custom-app-browser:hover, #custom-app-code:hover, #custom-app-claude:hover, #custom-app-steam:hover {
+    border-image: url("dark-ages-bar-teal.png") 0 28 0 28 / 0 14px 0 14px stretch;
+    background: url("dark-ages-bar-teal-mid.png") padding-box;
+    background-size: 100% 100%;
+    color: @bright;
+}
+#custom-app-steam { margin-right: 8px; }
+
+#mode, #submap {
+    color: #fff6ee;
+    padding: 0 6px;
+    margin: 4px 4px;
+    border-style: solid;
+    border-width: 0 14px;
+    border-color: transparent;
+    border-image: url("dark-ages-bar-orange.png") 0 28 0 28 / 0 14px 0 14px stretch;
+    background: url("dark-ages-bar-orange-mid.png") padding-box;
+    background-size: 100% 100%;
+    font-weight: 700;
+}
+
+#window {
+    color: @text;
+    padding: 0 10px;
+}
+window#waybar.empty #window {
+    padding: 0;
+}
+
+#clock {
+    color: @bright;
+    font-weight: 700;
+    padding: 0 12px;
+}
+
+/* right-side modules: hairline separators like the rows of the settings menu, teal icons */
+#tray, #language, #pulseaudio, #network, #bluetooth, #custom-perf,
+#cpu, #memory, #custom-gpu, #temperature, #backlight, #custom-brightness, #battery {
+    padding: 0 10px;
+    margin: 4px 0;
+    border-left: 1px solid @hairline;
+}
+#tray { border-left: none; }
+
+#language    { color: @teal; }
+/* input method: part of the keyboard item, so the same colour and no separator */
+#custom-ibus { color: @teal; padding: 0 10px 0 0; margin: 4px 0; }
+#pulseaudio  { color: @text; }
+#pulseaudio.muted { color: @dim; }
+/* headset battery: part of the volume item, so the volume's colour and no separator */
+#custom-bt-battery {
+    color: @text;
+    padding: 0 10px 0 0;
+    margin: 4px 0;
+}
+#custom-bt-battery.warning  { color: @orange; }
+#custom-bt-battery.critical { color: @red; }
+#network     { color: @text; }
+#network.disconnected { color: @dim; }
+#bluetooth   { color: @teal; }
+#cpu         { color: @text; }
+#memory      { color: @text; }
+#custom-gpu  { color: @text; }
+#custom-perf { color: @text; }
+#custom-perf.high { color: @orange; }
+#custom-gpu.high { color: @orange; }
+#temperature { color: @text; }
+#temperature.critical { color: @red; }
+#backlight   { color: @text; }
+#custom-brightness { color: @text; }
+#battery     { color: @teal; }
+#battery.charging, #battery.plugged { color: @teal; }
+#battery.warning:not(.charging)  { color: @orange; }
+#battery.critical:not(.charging) {
+    color: @red;
+    animation: blink 1s steps(6) infinite alternate;
+}
+@keyframes blink { to { color: @dim; } }
+
+#tray > .passive { -gtk-icon-effect: dim; }
+#tray > .needs-attention { -gtk-icon-effect: highlight; }
+
+tooltip {
+    background: @stone2;
+    border: 1px solid @rule;
+}
+tooltip label { color: @text; }
+
+/* volume drawer: slider slides out to the left of the speaker icon on hover (the game's teal sliders) */
+#pulseaudio-slider {
+    min-width: 110px;
+    padding: 0 8px 0 4px;
+    margin: 4px 0;
+}
+#pulseaudio-slider slider {
+    min-height: 0;
+    min-width: 0;
+    opacity: 0;
+    background-image: none;
+    border: none;
+    box-shadow: none;
+}
+#pulseaudio-slider trough {
+    min-height: 2px;
+    min-width: 100px;
+    background: @hairline;
+}
+#pulseaudio-slider highlight {
+    min-height: 2px;
+    background: @teal;
+}

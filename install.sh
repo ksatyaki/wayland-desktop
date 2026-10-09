@@ -18,8 +18,12 @@ Components (combine freely):
   --all               Everything above
 
 Options:
-  --login-theme NAME  Which login screen --enable-login installs: eternal (DOOM Eternal look, default)
-                      or dark-ages (DOOM: The Dark Ages look)
+  --theme NAME        Desktop look for the components above: eternal (default: Catppuccin Mocha bar, DOOM Eternal
+                      fonts and lock screens) or dark-ages (DOOM: The Dark Ages: dark teal stone, Cormorant serif,
+                      spear-tipped menu bars, the Revelations wallpaper). Files from themes/NAME/config/ are laid
+                      over config/ when installing; see themes/dark-ages/README.md
+  --login-theme NAME  Which login screen --enable-login installs: eternal (DOOM Eternal look) or dark-ages
+                      (DOOM: The Dark Ages look). Defaults to --theme
   --packages          Also install the distro packages the selected components need
                       (dnf on Fedora, apt on Ubuntu/Debian; asks for sudo)
   -h, --help          This text
@@ -29,11 +33,12 @@ Existing config is kept as <file>.bak-<timestamp>. Only --enable-login, the Sway
 EOF
 }
 
-HYPR=0; SWAY=0; BAR=0; THEMING=0; LOGIN=0; FONTS=0; PACKAGES=0; LOGIN_THEME=eternal
+HYPR=0; SWAY=0; BAR=0; THEMING=0; LOGIN=0; FONTS=0; PACKAGES=0; THEME=eternal; LOGIN_THEME=""
 [ $# -eq 0 ] && { usage; exit 2; }
-expect_theme=0
+expect_theme=0; expect_login_theme=0
 for a in "$@"; do
-    if [ $expect_theme = 1 ]; then LOGIN_THEME=$a; expect_theme=0; continue; fi
+    if [ $expect_login_theme = 1 ]; then LOGIN_THEME=$a; expect_login_theme=0; continue; fi
+    if [ $expect_theme = 1 ]; then THEME=$a; expect_theme=0; continue; fi
     case "$a" in
         --enable-hyprland) HYPR=1;;
         --enable-sway)     SWAY=1;;
@@ -43,7 +48,9 @@ for a in "$@"; do
         --enable-fonts)    FONTS=1;;
         --all)             HYPR=1; SWAY=1; BAR=1; THEMING=1; LOGIN=1; FONTS=1;;
         --packages)        PACKAGES=1;;
-        --login-theme)     expect_theme=1;;
+        --theme)           expect_theme=1;;
+        --theme=*)         THEME=${a#--theme=};;
+        --login-theme)     expect_login_theme=1;;
         --login-theme=*)   LOGIN_THEME=${a#--login-theme=};;
         -h|--help)         usage; exit 0;;
         *) echo "unknown option: $a" >&2; usage >&2; exit 2;;
@@ -52,6 +59,11 @@ done
 if [ $((HYPR + SWAY + BAR + THEMING + LOGIN + FONTS)) -eq 0 ]; then
     echo "nothing selected: pass at least one --enable-* flag or --all" >&2; exit 2
 fi
+case "$THEME" in
+    eternal) ;;
+    *) [ -d "$REPO/themes/$THEME" ] || { echo "unknown --theme: $THEME (eternal or $(ls "$REPO/themes" | tr '\n' ' '| sed 's/ $//'))" >&2; exit 2; };;
+esac
+[ -n "$LOGIN_THEME" ] || LOGIN_THEME=$THEME
 case "$LOGIN_THEME" in
     eternal)   LOGIN_DIR=sddm-astronaut-theme;;
     dark-ages) LOGIN_DIR=sddm-dark-ages-theme;;
@@ -125,14 +137,21 @@ MSG
 }
 
 # ---------------------------------------------------------------- helpers
-# put <repo>/config/<name> at ~/.config/<name>, keeping a timestamped backup of whatever was there
+STAGE=$(mktemp -d); trap 'rm -rf "$STAGE"' EXIT
+# put <repo>/config/<name> at ~/.config/<name>, keeping a timestamped backup of whatever was there.
+# With --theme NAME, files under <repo>/themes/NAME/config/<name>/ are laid over the defaults first.
 put_config() {
-    src="$REPO/config/$1"; dst="$HOME/.config/$1"
+    src="$REPO/config/$1"; dst="$HOME/.config/$1"; note=""
+    if [ -d "$REPO/themes/$THEME/config/$1" ]; then
+        src="$STAGE/$1"; rm -rf "$src"; mkdir -p "$src"
+        cp -r "$REPO/config/$1/." "$src/"; cp -r "$REPO/themes/$THEME/config/$1/." "$src/"
+        note=" ($THEME theme)"
+    fi
     if [ -e "$dst" ]; then
         if diff -rq "$src" "$dst" >/dev/null 2>&1; then echo "  $dst (unchanged)"; return 0; fi
         mv "$dst" "$dst.bak-$STAMP"; echo "  backup: $dst.bak-$STAMP"
     fi
-    mkdir -p "$(dirname "$dst")"; cp -r "$src" "$dst"; echo "  $dst"
+    mkdir -p "$(dirname "$dst")"; cp -r "$src" "$dst"; echo "  $dst$note"
     # a few tools write absolute paths into their config; point them at this user's home
     find "$dst" -type f \( -name '*.conf' -o -name '*.ini' \) -exec sed -i "s#/home/ksatyaki#$HOME#g" {} +
 }
@@ -142,14 +161,22 @@ install_fonts() {
     [ $FONTS_DONE = 1 ] && return 0; FONTS_DONE=1
     echo "Fonts:"
     mkdir -p "$HOME/.fonts/doom"
-    cp "$REPO"/fonts/doom/*.ttf "$HOME/.fonts/doom/"; fc-cache -f >/dev/null; echo "  ~/.fonts/doom (Eternal UI, Eternal UI 2)"
+    cp "$REPO"/fonts/doom/*.ttf "$HOME/.fonts/doom/"; echo "  ~/.fonts/doom (Eternal UI, Eternal UI 2)"
+    if [ "$THEME" = dark-ages ]; then   # the Dark Ages serif, shared with the login theme of the same name
+        mkdir -p "$HOME/.fonts/cormorant"
+        cp "$REPO"/sddm/sddm-dark-ages-theme/Fonts/Cormorant/*.otf "$HOME/.fonts/cormorant/"
+        mkdir -p "$HOME/.config/fontconfig/conf.d"   # lining digits for Cormorant, read by every component
+        cp "$REPO"/themes/dark-ages/config/fontconfig/conf.d/60-cormorant-lnum.conf "$HOME/.config/fontconfig/conf.d/"
+        echo "  ~/.fonts/cormorant (Cormorant) and ~/.config/fontconfig/conf.d/60-cormorant-lnum.conf"
+    fi
+    fc-cache -f >/dev/null
 }
 
 WALL_DONE=0
 install_wallpaper() {
     [ $WALL_DONE = 1 ] && return 0; WALL_DONE=1
     mkdir -p "$HOME/Pictures/Wallpapers"
-    cp "$REPO"/wallpapers/* "$HOME/Pictures/Wallpapers/"; echo "  ~/Pictures/Wallpapers (DOOM95.jpeg, used by the lock screens and waypaper)"
+    cp "$REPO"/wallpapers/* "$HOME/Pictures/Wallpapers/"; echo "  ~/Pictures/Wallpapers (DOOM95.jpeg for eternal, revelations.jpg for dark-ages; used by the lock screens and waypaper)"
 }
 
 # ---------------------------------------------------------------- DDC/CI (external monitor brightness)
@@ -216,6 +243,10 @@ fi
 if [ $THEMING = 1 ]; then
     echo "App theming (Qt/GTK):"
     for d in qt6ct qt5ct gtk-3.0 gtk-4.0 fontconfig alacritty mimeapps.list; do put_config "$d"; done
+    if [ "$THEME" = dark-ages ]; then   # the overlay adds colors/Dark-Ages.conf; point qt6ct and qt5ct at it
+        sed -i 's#colors/Catppuccin-Mocha.conf#colors/Dark-Ages.conf#' "$HOME/.config/qt6ct/qt6ct.conf" "$HOME/.config/qt5ct/qt5ct.conf"
+        echo "  qt6ct/qt5ct palette: Dark-Ages.conf"
+    fi
     if [ -e "$HOME/.zprofile" ] && ! cmp -s "$REPO/home/.zprofile" "$HOME/.zprofile"; then
         cp "$HOME/.zprofile" "$HOME/.zprofile.bak-$STAMP"; echo "  backup: ~/.zprofile.bak-$STAMP"
     fi
@@ -260,7 +291,10 @@ fi
 
 # ---------------------------------------------------------------- what is left to do by hand
 echo
-echo "Done."
+echo "Done (theme: $THEME)."
+if [ "$THEME" != eternal ] && [ $((BAR + HYPR + SWAY)) -gt 0 ]; then
+    echo "Already logged in? Apply the new look now: systemctl --user restart waybar.service (Hyprland) or swaymsg reload, makoctl reload, waypaper --restore."
+fi
 if [ $((BAR + HYPR + SWAY + THEMING)) -gt 0 ]; then
     echo "Fonts not in this repo (see README): JetBrainsMono Nerd Font -> ~/.fonts/JetBrainsMono/, Iosevka and IBM Plex Sans -> ~/.fonts/, then fc-cache -f."
 fi

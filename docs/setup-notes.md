@@ -23,7 +23,7 @@ the login and lock screens in [login-and-lock-screen.md](login-and-lock-screen.m
 | `~/.config/waybar/config.jsonc`, `config-hyprland.jsonc` | Bar entry for Sway / Hyprland: a single bar for every output, including the module file below |
 | `~/.config/waybar/modules-sway.jsonc` | The modules themselves for Sway: bottom position, hover volume slider, icons written as `\u` escapes |
 | `~/.config/waybar/modules-hyprland.jsonc` | Same modules using the `hyprland/*` workspace, window, submap and language modules |
-| `~/.config/waybar/style.css` | Solid Catppuccin Mocha stylesheet, workspace highlight for both compositors, slider styling |
+| `~/.config/waybar/style.css` | Solid Catppuccin Mocha stylesheet, workspace highlight for both compositors, slider styling (the Dark Ages theme replaces it with a textured one plus its `dark-ages-*.png`) |
 | `~/.config/waybar/scripts/brightness.sh` | Per-monitor brightness for the bar module and the Fn keys (backlight or DDC/CI) |
 | `~/.config/waybar/scripts/perf.sh`, `gpu.sh` | Data for the metrics gauge (CPU temp and usage, memory, GPU temp, usage and VRAM via nvidia-smi) |
 | `~/.config/mako/config` | Notification daemon in the same palette |
@@ -36,7 +36,9 @@ the login and lock screens in [login-and-lock-screen.md](login-and-lock-screen.m
 |---|---|
 | `~/.config/hypr/hyprland.lua` | Compositor config in the Hyprland >= 0.56 Lua format: same keybindings, monitor layout, NVIDIA and Electron environment, window rules, autostart |
 | `~/.config/hypr/hypridle.conf` | Lock after 10 minutes, screen off after 15, lock before sleep |
-| `~/.config/hypr/hyprlock.conf` | Lock screen, with `eternal-input.png` and `eternal-layout.png` as the chamfered panels |
+| `~/.config/hypr/hyprlock.conf` | Lock screen, with `eternal-input.png` and `eternal-layout.png` as the chamfered panels (Dark Ages: `dark-ages-*.png`) |
+| `~/.config/hypr/theme.lua` | Window border and group-tab colours, the compositor font, extra layer rules; loaded by `hyprland.lua` with `dofile`. Catppuccin by default, replaced by `./install.sh --theme dark-ages` |
+| `~/.config/sway/theme` | The same for Sway (`font` and `client.*` lines), included by the Sway config |
 
 ### App theming, system and keyring
 
