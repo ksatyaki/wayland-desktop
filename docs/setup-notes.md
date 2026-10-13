@@ -118,7 +118,9 @@ the login and lock screens in [login-and-lock-screen.md](login-and-lock-screen.m
   a panel under `/sys/class/backlight` (`brightnessctl`), otherwise the i2c bus that `ddcutil detect` reports for that DRM
   connector — matched on `DRM_connector` first, on the EDID serial otherwise. A monitor that answers neither prints nothing,
   which hides the module on that bar. Scrolling and the Fn keys
-  both move in linear 5% steps, so the number on the bar is the value written to the hardware.
+  both step to the next multiple of 5 (`5%+`: 21 -> 25 -> 30; `5%-`: 28 -> 25 -> 20), so the number on the bar is a round
+  value and the one written to the hardware. The bar uses `scroll` instead of `set`: waybar fires one event per touchpad
+  frame, dozens per swipe, so `scroll` takes at most one step per 150 ms per output (`SCROLL_MS`) and drops the rest.
 - DDC/CI is slow (~0.3 s per call), so the bar shows a cached value, re-read from the monitor every 5 min, and a scroll
   burst is coalesced behind a `flock` into a single write — the bar updates immediately (`pkill -RTMIN+8 waybar`) and only
   the final position goes out over i2c.

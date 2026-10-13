@@ -58,6 +58,7 @@
             ]
         },
         "scroll-step": 5,
+        "reverse-scrolling": true,   // natural-scroll touchpad: finger up = louder (mouse wheel left alone)
         "on-click": "pavucontrol",
         "on-click-middle": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
         "tooltip-format": "{desc}\nmiddle-click: mute, scroll: volume"
@@ -106,8 +107,11 @@
     // external monitors over DDC/CI. On a monitor that answers neither, the module hides.
     "custom/brightness": {
         "exec": "~/.config/waybar/scripts/brightness.sh status self",
-        "on-scroll-up": "~/.config/waybar/scripts/brightness.sh set focused 5%+",
-        "on-scroll-down": "~/.config/waybar/scripts/brightness.sh set focused 5%-",
+        "on-scroll-up": "~/.config/waybar/scripts/brightness.sh scroll focused 5%+",
+        "on-scroll-down": "~/.config/waybar/scripts/brightness.sh scroll focused 5%-",
+        // the touchpad scrolls naturally (finger up = scroll-down event); flip that back so finger up
+        // brightens. Touchpad only: a mouse wheel is left alone (that would be reverse-mouse-scrolling)
+        "reverse-scrolling": true,
         "return-type": "json",
         "interval": 5,
         "signal": 8,

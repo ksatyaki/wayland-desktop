@@ -2,7 +2,8 @@
 # Per-monitor brightness, for the waybar module and the XF86MonBrightness keys.
 #
 #   brightness.sh status <output>                waybar JSON for that output's bar
-#   brightness.sh set    <output> 5%+|5%-|50%
+#   brightness.sh set    <output> 5%+|5%-|50%    for the keys: up/down to the next multiple of 5
+#   brightness.sh scroll <output> 5%+|5%-        for the bar: same, but at most one step per $SCROLL_MS
 #   <output> may be "focused", or "self" for the output of the bar running the
 #   script: waybar exports WAYBAR_OUTPUT_NAME to a custom module's exec, but not
 #   to its on-scroll commands, so those use "focused" (the monitor under the cursor).
@@ -11,11 +12,17 @@
 # monitors go over DDC/CI (ddcutil), which needs i2c access -- see docs/bar.md.
 # A DDC round trip costs ~0.3 s, so the value shown in the bar is cached in
 # $XDG_RUNTIME_DIR and rapid scrolls are coalesced into a single monitor write.
+#
+# "5%+" means up to the next multiple of 5 (21 -> 25, 25 -> 30), "5%-" down to the
+# previous one (28 -> 25, 25 -> 20), so a step always lands on a round number. The
+# bar's scroll events come one per touchpad frame, dozens per swipe, so "scroll"
+# drops the ones that arrive within $SCROLL_MS of the last step that went through.
 set -u
 
 VCP=10                                      # DDC/CI "luminance"
 SIG=8                                       # waybar signal for custom/brightness
 TTL=300                                     # re-read the hardware after this many seconds
+SCROLL_MS=150                               # minimum time between two scroll steps on one output
 DDC=(--sleep-multiplier .3 --noverify)
 STATE="${XDG_RUNTIME_DIR:-/tmp}/brightness"
 mkdir -p "$STATE"
@@ -129,14 +136,24 @@ status() {
            '{text: $t, percentage: $p, tooltip: $tip, class: "brightness"}'
 }
 
+# at most one scroll step per $SCROLL_MS on this output; the lock serialises the scripts that waybar
+# spawns for one swipe, so exactly one of them takes the step and the rest see it and exit
+throttle() {
+    local f="$STATE/$OUT.step" now last
+    exec 7>"$STATE/$OUT.step.lock"; flock 7
+    now=$(( ${EPOCHREALTIME/./} / 1000 )); last=$(cat "$f" 2>/dev/null); last=${last:-0}
+    [ $(( now - last )) -ge $SCROLL_MS ] || return 1
+    echo "$now" > "$f"
+}
+
 adjust() {   # <5%+|5%-|50%>
     backend "$OUT"
     [ "$BTYPE" = none ] && return
-    local new cur
+    local new cur n
     cur=$(value); cur=${cur:-50}
     case $1 in
-        *%+) new=$(( cur + ${1%\%+} ));;
-        *%-) new=$(( cur - ${1%\%-} ));;
+        *%+) n=${1%\%+}; new=$(( (cur / n + 1) * n ));;             # next multiple of n above cur
+        *%-) n=${1%\%-}; new=$(( ((cur + n - 1) / n - 1) * n ));;   # previous multiple of n below cur
         *%)  new=${1%\%};;
         *)   new=$1;;
     esac
@@ -163,5 +180,6 @@ cmd=${1:-status}; OUT=${2:-focused}
 case $cmd in
     status) status;;
     set)    adjust "${3:?usage: brightness.sh set <output> 5%+|5%-|50%}";;
-    *)      echo "usage: brightness.sh status|set <output> [5%+]" >&2; exit 2;;
+    scroll) throttle && adjust "${3:?usage: brightness.sh scroll <output> 5%+|5%-}";;
+    *)      echo "usage: brightness.sh status|set|scroll <output> [5%+]" >&2; exit 2;;
 esac
