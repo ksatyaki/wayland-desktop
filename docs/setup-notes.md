@@ -120,7 +120,11 @@ the login and lock screens in [login-and-lock-screen.md](login-and-lock-screen.m
   which hides the module on that bar. Scrolling and the Fn keys
   both step to the next multiple of 5 (`5%+`: 21 -> 25 -> 30; `5%-`: 28 -> 25 -> 20), so the number on the bar is a round
   value and the one written to the hardware. The bar uses `scroll` instead of `set`: waybar fires one event per touchpad
-  frame, dozens per swipe, so `scroll` takes at most one step per 150 ms per output (`SCROLL_MS`) and drops the rest.
+  frame, dozens per swipe, so `scroll` takes at most one step per 200 ms per output (`SCROLL_MS`) and drops the rest.
+- Volume scrolling on the bar goes through `scripts/volume.sh scroll 5%+|5%-` for the same reason: the pulseaudio module's
+  built-in `scroll-step` takes one step per touchpad event. `on-scroll-up`/`on-scroll-down` on the module turn the built-in
+  handling off; the script snaps to the next multiple of 5 via `wpctl` and takes at most one step per 200 ms. The module
+  redraws from the PipeWire event, so no signal is needed. The Fn keys stay plain `wpctl ... 5%+`.
 - DDC/CI is slow (~0.3 s per call), so the bar shows a cached value, re-read from the monitor every 5 min, and a scroll
   burst is coalesced behind a `flock` into a single write — the bar updates immediately (`pkill -RTMIN+8 waybar`) and only
   the final position goes out over i2c.

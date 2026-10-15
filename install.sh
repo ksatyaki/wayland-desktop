@@ -234,7 +234,8 @@ if [ $BAR = 1 ]; then
     echo "Bar, launcher, notifications, wallpaper:"
     for d in waybar mako fuzzel waypaper; do put_config "$d"; done
     chmod +x "$HOME/.config/waybar/scripts/perf.sh" "$HOME/.config/waybar/scripts/gpu.sh" \
-             "$HOME/.config/waybar/scripts/brightness.sh" "$HOME/.config/waybar/scripts/bt-battery.sh"
+             "$HOME/.config/waybar/scripts/brightness.sh" "$HOME/.config/waybar/scripts/bt-battery.sh" \
+             "$HOME/.config/waybar/scripts/volume.sh"
     enable_ddc
     enable_bt_battery
     install_wallpaper

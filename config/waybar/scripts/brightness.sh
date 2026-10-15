@@ -22,7 +22,7 @@ set -u
 VCP=10                                      # DDC/CI "luminance"
 SIG=8                                       # waybar signal for custom/brightness
 TTL=300                                     # re-read the hardware after this many seconds
-SCROLL_MS=150                               # minimum time between two scroll steps on one output
+SCROLL_MS=200                               # minimum time between two scroll steps on one output
 DDC=(--sleep-multiplier .3 --noverify)
 STATE="${XDG_RUNTIME_DIR:-/tmp}/brightness"
 mkdir -p "$STATE"

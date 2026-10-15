@@ -57,7 +57,10 @@
                 "\udb81\udd7e"
             ]
         },
-        "scroll-step": 5,
+        // scroll through scripts/volume.sh, not the built-in scroll-step: waybar fires one event per touchpad
+        // frame, so the script snaps to multiples of 5 and takes at most one step per 200 ms, like brightness
+        "on-scroll-up": "~/.config/waybar/scripts/volume.sh scroll 5%+",
+        "on-scroll-down": "~/.config/waybar/scripts/volume.sh scroll 5%-",
         "reverse-scrolling": true,   // natural-scroll touchpad: finger up = louder (mouse wheel left alone)
         "on-click": "pavucontrol",
         "on-click-middle": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
