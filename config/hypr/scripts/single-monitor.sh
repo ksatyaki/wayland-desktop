@@ -5,6 +5,8 @@
 # (line 1: "<output> <WxH@Hz>", then one output name per line to disable); hyprland.lua reads that file at (re)load, so a
 # plain `hyprctl reload` applies whichever layout the file says. The workspace -> monitor map from before single mode is
 # kept next to it and restored on the way back.
+# Per monitor only its native mode is considered: the largest resolution at its highest refresh rate. (The AOC also advertises
+# a 3840x2160@60 mode it downscales internally; ranking by pixels alone picked that over 2560x1440@144.)
 #   single-monitor.sh           toggle
 #   single-monitor.sh refresh   called from hyprland.lua on monitor hotplug: in single mode re-pick (a bigger monitor
 #                               takes over, a vanished one is dropped); in layout mode do nothing
@@ -18,10 +20,13 @@ pick() {
     hyprctl -j monitors all | jq -r --argjson max "$max_hz" '
         map(select(.name != "eDP-1")) as $ext
         | if ($ext | length) == 0 then empty else
-            ([ $ext[] | . as $m | .availableModes[]
-               | capture("^(?<w>[0-9]+)x(?<h>[0-9]+)@(?<r>[0-9.]+)")
-               | { name: $m.name, w: (.w | tonumber), h: (.h | tonumber), r: (.r | tonumber) }
-               | select(.r <= $max + 0.5) ]
+            ([ $ext[] | . as $m
+               | [ .availableModes[]
+                   | capture("^(?<w>[0-9]+)x(?<h>[0-9]+)@(?<r>[0-9.]+)")
+                   | { name: $m.name, w: (.w | tonumber), h: (.h | tonumber), r: (.r | tonumber) }
+                   | select(.r <= $max + 0.5) ]
+               | (max_by(.r).r) as $top                      # highest refresh rate of this monitor ...
+               | map(select(.r >= $top - 0.5)) | max_by(.w * .h) ]   # ... and the largest resolution it offers at that rate = native
              | max_by([.w * .h, .r])) as $best
             | "\($best.name) \($best.w)x\($best.h)@\(($best.r + 0.5) | floor)",
               (.[] | select(.name != $best.name) | .name)
