@@ -159,6 +159,7 @@ Then fetch the fonts listed under Dependencies, edit the monitor lines for your 
 | `tools/dark-ages-background.py` | not installed: regenerates the Dark Ages login background | |
 | `tools/dark-ages-assets.py` | not installed: regenerates the Dark Ages theme's stone texture, spear-tipped bars and rule PNGs | |
 | `tools/purge-kde-config.sh` | not installed: removes leftover Plasma/KDE config that overrides the Qt/GTK theming (`--dry-run` to preview; archives to `~/.local/state/`) | |
+| `tools/proton-grab-fullscreen.sh` | not installed: makes fullscreen Proton games keep the mouse on their own monitor (run again after installing a game; `--remove` to undo) | |
 | `refcard.html` | not installed: one-page keybinding and command cheatsheet, open in a browser | |
 
 ## More documentation

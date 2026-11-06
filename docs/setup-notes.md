@@ -149,6 +149,7 @@ the login and lock screens in [login-and-lock-screen.md](login-and-lock-screen.m
 
 - Proton games get the X11 class `steam_app_<appid>`, Wine programs `<name>.exe`. Both compositors send anything matching `^(steam_app_\d+|.*\.exe)$` to the workspace pinned to the Lenovo 1440p monitor: workspace 1 in Hyprland (workspace 2 is pinned to the HP), workspace 2 in Sway (`hl.workspace_rule` / `workspace 2 output` rules next to the other assigns).
 - Check a game's class with `hyprctl clients` or `swaymsg -t get_tree | grep class`.
+- Mouse leaving a fullscreen game for the next monitor (edge scrolling in Age of Empires II DE): this is Wine, not the compositor. Wine confines the pointer by itself only when the game covers the whole desktop, so never with several monitors. `tools/proton-grab-fullscreen.sh` sets Wine's `GrabFullscreen=Y` (winecfg's "Automatically capture the mouse in full-screen windows") in every Proton prefix; Xwayland passes the grab on as a pointer constraint that Hyprland and Sway honour. The setting is per prefix and read at game start, so run the script again after installing a game. It only applies while the game window is fullscreen and focused.
 
 ## Wallpapers
 
