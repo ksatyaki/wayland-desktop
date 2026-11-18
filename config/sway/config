@@ -25,10 +25,9 @@ smart_borders on
 output eDP-1    pos 0 160 scale 1.25
 output "Lenovo Group Limited G27q-20 U63330HD" pos 2048 0
 output "HP Inc. HP E24u G5 CN43172GTD" pos 4608 360
-# office layout: Dell, AOC, Dell; eDP-1 is switched off by kanshi (~/.config/kanshi/config)
-output "Dell Inc. DELL U2422H 3119RP3" pos 0 360
-output "AOC Q27G42XE 1O0R4HA008572" pos 1920 0
-output "Dell Inc. DELL U2422H 85LJRP3" pos 4480 360
+# office layout: Dell, Dell, laptop panel; kanshi moves eDP-1 to the right, unscaled (~/.config/kanshi/config)
+output "Dell Inc. DELL U2422H 85LJRP3" pos 0 520
+output "Dell Inc. DELL U2422H 3119RP3" pos 1920 520
 
 ### Input ###############################################################
 
@@ -185,7 +184,7 @@ bar {
 exec mako
 exec awww-daemon
 exec sleep 1 && waypaper --restore
-exec kanshi   # per-site monitor profiles, incl. disabling eDP-1 at the office
+exec kanshi   # per-site monitor profiles, incl. moving eDP-1 to the right at the office
 # polkit agent (password prompts for privileged actions); also used by Hyprland
 # tell systemd --user the graphical session is up: xdg-desktop-portal (screen sharing) depends on graphical-session.target
 exec systemctl --user import-environment WAYLAND_DISPLAY DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP XDG_SESSION_TYPE && dbus-update-activation-environment --systemd WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE && systemctl --user start sway-session.target

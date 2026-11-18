@@ -41,23 +41,9 @@ local function read_single_monitor()   -- line 1: "<output> <WxH@Hz>", then one 
     return pick.name and pick or nil
 end
 
--- "WxH@Hz" with the highest refresh rate (at most `max_hz`) the connected monitor whose description contains `desc` offers at
--- that resolution; `fallback` when it is not connected. hl.get_monitors() lists enabled monitors only.
-local function best_mode(desc, w, h, fallback, max_hz)
-    local best
-    for _, m in ipairs(hl.get_monitors()) do
-        if m.description and m.description:find(desc, 1, true) and type(m.available_modes) == "table" then
-            for _, mode in ipairs(m.available_modes) do
-                if mode.width == w and mode.height == h and mode.refresh_rate <= (max_hz or math.huge) + 0.5
-                   and (not best or mode.refresh_rate > best) then best = mode.refresh_rate end
-            end
-        end
-    end
-    return best and string.format("%dx%d@%d", w, h, math.floor(best + 0.5)) or fallback
-end
-
--- laptop panel (eDP-1): on at home and on the road, off whenever an office monitor is connected
-local office_monitors = { "AOC Q27G42XE", "DELL U2422H" }
+-- at the office (a Dell connected) the laptop panel sits right of the Dells, unscaled; at home and on the road it is the
+-- leftmost screen
+local office_monitors = { "DELL U2422H" }
 local function docked()
     for _, m in ipairs(hl.get_monitors()) do
         for _, d in ipairs(office_monitors) do
@@ -67,12 +53,7 @@ local function docked()
     return false
 end
 -- everything this block derives from the connected monitors; when a hotplug changes it, the config is reloaded
--- The AOC advertises up to 180 Hz over the dock's DisplayPort, but at 180 Hz the modeset succeeds and the monitor shows
--- "no signal". 144 Hz works from a fresh boot; switching to it live right after the 180 Hz attempt hung the compositor in
--- the DRM atomic commit (NVIDIA, 2026-10-07), so change rates by reload only when nothing is already wrong. Over the laptop's
--- own HDMI port 144 Hz fails the modeset and falls back to 60 Hz; 120 Hz works there.
-local AOC_MAX_HZ = 144
-local function layout_key() return tostring(docked()) .. " " .. best_mode("AOC Q27G42XE", 2560, 1440, "preferred", AOC_MAX_HZ) end
+local function layout_key() return tostring(docked()) end
 local loaded_layout_key = layout_key()
 
 local single_monitor = read_single_monitor()
@@ -83,15 +64,13 @@ else
     -- home: laptop panel left (bottom-aligned), Lenovo, HP
     hl.monitor({ output = "desc:Lenovo Group Limited G27q-20 U63330HD", mode = "2560x1440@120", position = "2048x0",   scale = 1 })  -- Lenovo 2560x1440, 120 Hz (its EDID-preferred mode is only 60 Hz)
     hl.monitor({ output = "desc:HP Inc. HP E24u G5 CN43172GTD",        mode = "preferred", position = "4608x360", scale = 1 })  -- HP 1920x1080
-    -- office: Dell, AOC, Dell, bottom-aligned, laptop panel off. All three hang off the dock (left Dell on its HDMI port, AOC
-    -- and right Dell on DisplayPort) and reach the laptop as DP-3/4/5, hence the serial matching. The AOC runs at the
-    -- highest 1440p rate its link offers up to AOC_MAX_HZ (its EDID-preferred mode is 60 Hz).
-    hl.monitor({ output = "desc:Dell Inc. DELL U2422H 3119RP3",         mode = "preferred", position = "0x360",    scale = 1 })  -- Dell 1920x1080 (left, dock HDMI)
-    hl.monitor({ output = "desc:AOC Q27G42XE 1O0R4HA008572",            mode = best_mode("AOC Q27G42XE", 2560, 1440, "preferred", AOC_MAX_HZ), position = "1920x0", scale = 1 })  -- AOC 2560x1440
-    hl.monitor({ output = "desc:Dell Inc. DELL U2422H 85LJRP3",         mode = "preferred", position = "4480x360", scale = 1 })  -- Dell 1920x1080 (right)
+    -- office: Dell, Dell, laptop panel, bottom-aligned. The Dells hang off the dock and reach the laptop under changing
+    -- DP-n names, hence the serial matching.
+    hl.monitor({ output = "desc:Dell Inc. DELL U2422H 85LJRP3",         mode = "preferred", position = "0x520",    scale = 1 })  -- Dell 1920x1080 (left)
+    hl.monitor({ output = "desc:Dell Inc. DELL U2422H 3119RP3",         mode = "preferred", position = "1920x520", scale = 1 })  -- Dell 1920x1080 (centre)
 
     if docked() then
-        hl.monitor({ output = "eDP-1", disabled = true })
+        hl.monitor({ output = "eDP-1", mode = "preferred", position = "3840x0", scale = 1 })  -- 2560x1600, right of the Dells, no scaling
     else
         hl.monitor({ output = "eDP-1", mode = "preferred", position = "0x160", scale = 1.25 }) -- 2560x1600 -> 2048x1280 logical
     end
