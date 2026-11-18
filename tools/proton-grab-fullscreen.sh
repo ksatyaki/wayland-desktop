@@ -8,11 +8,13 @@
 # X11 grab into a Wayland pointer constraint, which Hyprland and Sway both honour; neither compositor has a setting of
 # its own for this. The pointer is released again when the game loses focus (workspace switch, Super+Tab).
 #
-# The value lives in each game's Wine prefix and is read when the game starts, so run this again after installing a game.
+# The value lives in each game's Wine prefix and is read when the game starts. Only Age of Empires II DE gets it by
+# default: in other games (shooters, GTA) the grab is unwanted, so name their appids explicitly if you ever want it.
 #
-# Usage: tools/proton-grab-fullscreen.sh [--remove] [appid ...]    (default: every Proton prefix in every Steam library)
+# Usage: tools/proton-grab-fullscreen.sh [--remove] [appid ...]    (default: 813780, Age of Empires II DE)
 set -u
 REMOVE=0; [ "${1:-}" = "--remove" ] && { REMOVE=1; shift; }
+[ $# -gt 0 ] || set -- 813780
 KEY='HKCU\Software\Wine\X11 Driver'
 STEAM=${XDG_DATA_HOME:-$HOME/.local/share}/Steam
 
